@@ -23,9 +23,9 @@ export default function Navbar() {
             </Link>
           </nav>
           <div className="flex items-center gap-3">
-            <button className="rounded-full bg-brand-base px-4 py-2 text-accent hover:opacity-90">
+            <Link href="/sign-in" className="rounded-full bg-brand-base px-4 py-2 text-accent hover:opacity-90">
               Sign In
-            </button>
+            </Link>
           </div>
         </div>
       </div>
