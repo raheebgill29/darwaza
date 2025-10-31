@@ -18,11 +18,15 @@ export default function SignInPage() {
     setError(null);
     setLoading(true);
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) {
         setError(signInError.message);
       } else {
-        router.push("/");
+        const userFromSignIn = data?.user;
+        const { data: userData } = await supabase.auth.getUser();
+        const user = userFromSignIn ?? userData.user;
+        const role = user?.user_metadata?.role;
+        router.push(role === "admin" ? "/admin-dashboard" : "/");
       }
     } catch (err) {
       setError("Unexpected error. Please try again.");
@@ -77,9 +81,7 @@ export default function SignInPage() {
           Don’t have an account? <a href="/sign-up" className="text-accent underline">Sign up</a>
         </p>
 
-        <div className="mt-8 rounded-xl bg-brand-base/60 p-3 text-xs text-accent/70">
-          Ensure environment variables are set in `.env.local`: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.
-        </div>
+      
       </main>
       <Footer />
     </div>

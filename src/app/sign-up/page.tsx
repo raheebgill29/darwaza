@@ -23,7 +23,7 @@ export default function SignUpPage() {
         email,
         password,
         options: {
-          data: { full_name: name },
+          data: { full_name: name, role: "user" },
         },
       });
       if (signUpError) {
@@ -96,9 +96,7 @@ export default function SignUpPage() {
           Already have an account? <a href="/sign-in" className="text-accent underline">Sign in</a>
         </p>
 
-        <div className="mt-8 rounded-xl bg-brand-base/60 p-3 text-xs text-accent/70">
-          Ensure environment variables are set in `.env.local`: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.
-        </div>
+      
       </main>
       <Footer />
     </div>
