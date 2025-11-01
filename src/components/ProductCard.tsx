@@ -21,20 +21,20 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [src, setSrc] = useState(image);
   return (
-    <article className="rounded-2xl bg-brand-base p-4 shadow-sm">
+    <article className="rounded-2xl bg-brand-base p-4 shadow-sm overflow-hidden">
       {badge && (
         <span className="inline-block rounded-full bg-white/70 px-2 py-1 text-xs text-accent">
           {badge}
         </span>
       )}
 
-      <div className="mt-2 flex h-40 items-center justify-center">
+      <div className="mt-2 relative h-40 w-full overflow-hidden rounded-md">
         <Image
           src={src}
           alt={title}
-          width={400}
-          height={300}
-          className="rounded-md object-cover"
+          fill
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+          className="object-cover"
           onError={() => setSrc("https://picsum.photos/400/300")}
         />
       </div>
