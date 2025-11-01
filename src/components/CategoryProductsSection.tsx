@@ -51,6 +51,7 @@ export default async function CategoryProductsSection({ categoryName, title, lim
     const images = (p.product_images ?? []).sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
     const image = images[0]?.image_url || undefined;
     return {
+      id: p.id,
       title: p.name,
       price: formatPrice(p.price),
       image,
@@ -63,7 +64,7 @@ export default async function CategoryProductsSection({ categoryName, title, lim
       {title && <h3 className="text-2xl font-semibold text-accent">{title}</h3>}
       <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((p) => (
-          <ProductCard key={p.title} title={p.title} price={p.price} image={p.image} href={p.href} />
+          <ProductCard key={p.title} id={p.id} title={p.title} price={p.price} image={p.image} href={p.href} />
         ))}
       </div>
     </section>

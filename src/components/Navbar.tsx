@@ -3,9 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useCart } from "@/lib/cartContext";
+import CartIcon from "./icons/CartIcon";
 
 export default function Navbar() {
   const [displayName, setDisplayName] = useState<string | null>(null);
+  const { count } = useCart();
 
   useEffect(() => {
     let mounted = true;
@@ -59,6 +62,15 @@ export default function Navbar() {
                 Sign In
               </Link>
             )}
+            <Link href="/cart" className="relative rounded-full bg-brand-base px-4 py-2 text-accent hover:opacity-90 flex items-center gap-2">
+              <CartIcon className="w-5 h-5" />
+              <span>Cart</span>
+              {count > 0 && (
+                <span className="absolute -top-2 -right-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">
+                  {count}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
       </div>

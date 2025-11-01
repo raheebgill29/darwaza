@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import AddToCartButton from "@/components/AddToCartButton";
 
 type ProductCardProps = {
   title: string;
@@ -10,6 +11,7 @@ type ProductCardProps = {
   image?: string; // local or remote URL
   href?: string;
   badge?: string;
+  id?: string;
 };
 
 export default function ProductCard({
@@ -18,8 +20,17 @@ export default function ProductCard({
   image = "/file.svg",
   href = "#",
   badge,
+  id,
 }: ProductCardProps) {
   const [src, setSrc] = useState(image);
+  const resolvedId = useMemo(() => {
+    if (id) return id;
+    if (href && href !== "#") {
+      const seg = href.split("/").filter(Boolean).pop();
+      if (seg) return seg;
+    }
+    return title.toLowerCase().replace(/\s+/g, "-");
+  }, [id, href, title]);
   return (
     <article className="rounded-2xl bg-brand-base p-4 shadow-sm overflow-hidden">
       {badge && (
@@ -48,6 +59,16 @@ export default function ProductCard({
       >
         View
       </Link>
+      <div className="mt-2">
+        <AddToCartButton
+          id={resolvedId}
+          title={title}
+          price={price ?? "0"}
+          image={src}
+          className="rounded-full bg-brand-base px-3 py-1 text-accent hover:opacity-90"
+          label="Add to Cart"
+        />
+      </div>
     </article>
   );
 }

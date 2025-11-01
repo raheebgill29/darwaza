@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/data/products";
+import AddToCartButton from "@/components/AddToCartButton";
 
 type Props = {
   product: Product;
@@ -41,7 +42,7 @@ export default function ProductDetail({ product }: Props) {
           )}
 
           <div className="mt-8 flex gap-3">
-            <button className="rounded-full bg-brand-base px-5 py-2 text-accent hover:opacity-90">Add to Cart</button>
+            <AddToCartButton id={product.slug} title={title} price={price} image={image} />
             <Link href="/" className="rounded-full border border-accent px-5 py-2 text-accent hover:bg-white/60">
               Back to Home
             </Link>
