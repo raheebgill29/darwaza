@@ -1,6 +1,14 @@
 import ProductCard from "@/components/ProductCard";
+import CategoryProductsSection from "@/components/CategoryProductsSection";
 
 export default function CategorySections() {
+  // Dynamic section powered by Supabase: Dress products
+  // Rendered first, then fallback demo sections below
+  // Note: If no Dress category or products, this renders nothing
+  const DressSection = (
+    <CategoryProductsSection categoryName="dress" title="Dress" />
+  );
+
   const clothes = [
     { title: "Rose Midi Dress", price: "Rs 4,500", image: "https://images.unsplash.com/photo-1520975666741-aabf2f5b1cb7?auto=format&fit=crop&w=400&h=300&q=60", href: "/products/rose-midi-dress" },
     { title: "Soft Knit Top", price: "Rs 2,100", image: "https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=400&h=300&q=60", href: "/products/soft-knit-top" },
@@ -24,6 +32,7 @@ export default function CategorySections() {
 
   return (
     <section className="mx-auto max-w-6xl py-10">
+      {DressSection}
       {/* Clothes */}
       <h3 className="text-2xl font-semibold text-accent">Clothes</h3>
       <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
