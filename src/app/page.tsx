@@ -14,12 +14,18 @@ export default function Home() {
       <Navbar />
       <main>
         <Banner />
-        <ShopByCategorySection />
+        <div id="shop-by-category">
+          <ShopByCategorySection />
+        </div>
         <LegoraSection />
-        <AnimatedProductShowcase />
+        <div id="new-arrivals">
+          <AnimatedProductShowcase />
+        </div>
         {/* <NewArrivalsSection /> */}
-        <ProductGridSection />
-        <CategorySections />
+        <div id="top-rated">
+          <ProductGridSection />
+        </div>
+        {/* <CategorySections /> */}
       </main>
       <Footer />
     </div>

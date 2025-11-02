@@ -31,6 +31,20 @@ export default function Navbar() {
     };
   }, []);
 
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const navbarHeight = 120; // Approximate height of the navbar
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - navbarHeight;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-brand-200">
       <div className="flex flex-col items-center justify-center py-4">
@@ -75,9 +89,9 @@ export default function Navbar() {
         </div>
         <nav className="mt-4 flex items-center justify-center gap-6 text-sm font-medium">
           <Link href="/" className="text-accent hover:text-primary">Home</Link>
-          <Link href="/shop" className="text-accent hover:text-primary">Shop</Link>
-          <Link href="/accessories" className="text-accent hover:text-primary">Accessories</Link>
-          <Link href="/about" className="text-accent hover:text-primary">About</Link>
+          <button onClick={() => scrollToSection('shop-by-category')} className="text-accent hover:text-primary">Shop</button>
+          <button onClick={() => scrollToSection('new-arrivals')} className="text-accent hover:text-primary">New Arrivals</button>
+          <button onClick={() => scrollToSection('top-rated')} className="text-accent hover:text-primary">Top Rated</button>
         </nav>
       </div>
     </header>
