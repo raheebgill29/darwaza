@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { products as dataProducts } from "@/data/products";
 
 interface Product {
   id: string;
@@ -13,13 +14,14 @@ interface Product {
   quote: string;
 }
 
+// Map product data to showcase format
 const showcaseProducts: Product[] = [
   {
     id: '1',
     name: 'Idolize Tote Bag',
     price: 'Rs 4,500',
     imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1974',
-    href: '/products/idolize-tote-bag',
+    href: `/products/${dataProducts.find(p => p.title === 'Idolize Tote Bag')?.slug || 'everyday-tote'}`,
     quote: 'Elegance is the only beauty that never fades. Embrace timeless style with our signature collection.',
   },
   {
@@ -27,7 +29,7 @@ const showcaseProducts: Product[] = [
     name: 'Rectangular Sunglasses',
     price: 'Rs 5,800',
     imageUrl: 'https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg',
-    href: '/products/rectangular-sunglasses',
+    href: `/products/${dataProducts.find(p => p.title === 'Rectangular Sunglasses')?.slug || 'silk-scarf'}`,
     quote: 'Confidence comes from within, but a well-tailored accessory helps. Discover style redefined.',
   },
   {
@@ -35,7 +37,7 @@ const showcaseProducts: Product[] = [
     name: 'Necessary Scarf',
     price: 'Rs 1,500',
     imageUrl: 'https://images.unsplash.com/photo-1617922001439-4a2e6562f328?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fG1vZGVsJTIwcG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600',
-    href: '/products/necessary-scarf',
+    href: '/products/compact-wallet',
     quote: 'The finishing touch that speaks volumes. Our accessories add subtle luxury to every outfit.',
   },
   {
@@ -43,7 +45,7 @@ const showcaseProducts: Product[] = [
     name: 'Relay Track Pants',
     price: 'Rs 2,900',
     imageUrl: 'https://images.pexels.com/photos/904350/pexels-photo-904350.jpeg',
-    href: '/products/relay-track-pants',
+    href: `/products/${dataProducts.find(p => p.title === 'Relay Track Pants')?.slug || 'classic-blazer'}`,
     quote: 'Carry your world with style. Thoughtfully designed for the modern lifestyle.',
   },
   {
@@ -51,7 +53,7 @@ const showcaseProducts: Product[] = [
     name: 'Polarised Sunglasses',
     price: 'Rs 2,300',
     imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: '/products/polarised-sunglasses',
+    href: `/products/${dataProducts.find(p => p.title === 'Polarised Sunglasses')?.slug || 'rose-pendant'}`,
     quote: 'Adorn yourself with pieces that tell your story. Accessories that become a part of you.',
   }
 ];

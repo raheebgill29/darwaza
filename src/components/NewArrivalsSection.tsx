@@ -1,6 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import HoverInfoOverlay from '@/components/HoverInfoOverlay';
+import { products as dataProducts } from "@/data/products";
 
 interface Product {
   id: string;
@@ -8,38 +10,21 @@ interface Product {
   price: string;
   imageUrl: string;
   href: string;
+  badge?: string;
 }
 
-const newArrivalsProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Brown Kimono',
-    price: '$120.00',
-    imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: '/products/classic-blazer',
-  },
-  {
-    id: '2',
-    name: 'Beige Pouch',
-    price: '$45.00',
-    imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: '/products/everyday-tote',
-  },
-  {
-    id: '3',
-    name: 'Brown Dress',
-    price: '$90.00',
-    imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: '/products/rose-midi-dress',
-  },
-  {
-    id: '4',
-    name: 'Gold Hoops',
-    price: '$60.00',
-    imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: '/products/petal-studs',
-  },
-];
+// Get the newest 4 products from the data
+const newArrivalsProducts: Product[] = dataProducts
+  .filter(product => product.badge === "NEW" || !product.badge)
+  .slice(0, 4)
+  .map(product => ({
+    id: product.slug,
+    name: product.title,
+    price: product.price,
+    imageUrl: product.image,
+    href: `/products/${product.slug}`,
+    badge: product.badge
+  }));
 
 const NewArrivalsSection: React.FC = () => {
   return (
@@ -48,15 +33,22 @@ const NewArrivalsSection: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {newArrivalsProducts.map((product) => (
           <Link href={product.href} key={product.id} className="group block">
-            <div className="relative w-full h-[350px] bg-gray-100 rounded-lg overflow-hidden">
+            <div className="group relative w-full h-[350px] bg-gray-100 rounded-lg overflow-hidden">
               <Image
                 src={product.imageUrl}
                 alt={product.name}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
+              <HoverInfoOverlay title={product.name} price={product.price} />
+              {product.badge && (
+                <div className="absolute top-2 left-2">
+                  <span className="bg-gray-800 text-white text-xs px-2 py-1 rounded-full">
+                    {product.badge}
+                  </span>
+                </div>
+              )}
             </div>
-
           </Link>
         ))}
       </div>

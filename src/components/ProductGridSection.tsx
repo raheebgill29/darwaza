@@ -15,58 +15,19 @@ interface Product {
   colors?: string[];
 }
 
-const products: Product[] = [
-  {
-    id: '1',
-    name: 'Idolize Tote Bag',
-    price: '116.00$',
-    originalPrice: '200.00$',
-    imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1974',
-    href: '/products/everyday-tote',
-    discount: '-42%',
-    isNew: true,
-  },
-  {
-    id: '2',
-    name: 'Rectangular Sunglasses',
-    price: '110.00$',
-    originalPrice: '120.00$',
-    imageUrl: 'https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg',
-    href: '/products/silk-scarf',
-    isNew: true,
-  },
-  {
-    id: '3',
-    name: 'Necessary Scarf',
-    price: '200.00$',
-    imageUrl: 'https://images.unsplash.com/photo-1617922001439-4a2e6562f328?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fG1vZGVsJTIwcG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600',
-    href: '/products/silk-scarf',
-  },
-  {
-    id: '4',
-    name: 'Relay Track Pants',
-    price: '250.00$',
-    imageUrl: 'https://images.pexels.com/photos/904350/pexels-photo-904350.jpeg',
-    href: '/products/classic-blazer',
-  },
-  {
-    id: '7',
-    name: 'Polarised Sunglasses',
-    price: '200.00$',
-    imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: '/products/rose-pendant',
-  },
-  {
-    id: '8',
-    name: 'Brigette Longsleeve',
-    price: '120.00$',
-    originalPrice: '100.00$',
-    imageUrl: 'https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg',
-    href: '/products/soft-knit-top',
-    discount: '-33%',
-    colors: ['#D1D5DB', '#F3F4F6', '#6B7280'],
-  },
-];
+import { products as dataProducts } from "@/data/products";
+
+// Map data products to the format needed for this component
+const products: Product[] = dataProducts.slice(0, 6).map(product => ({
+  id: product.slug,
+  name: product.title,
+  price: product.price,
+  originalPrice: product.details?.["Original Price"],
+  imageUrl: product.image,
+  href: `/products/${product.slug}`,
+  discount: product.badge,
+  isNew: product.badge === "NEW",
+}));
 
 const ProductGridSection: React.FC = () => {
   return (
