@@ -17,15 +17,16 @@ type Props = {
   image?: string | null;
   className?: string;
   label?: string; // default: "Add to Cart"
+  quantity?: number; // default: 1
 };
 
-export default function AddToCartButton({ id, title, price, image, className, label }: Props) {
+export default function AddToCartButton({ id, title, price, image, className, label, quantity = 1 }: Props) {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
   const priceNum = useMemo(() => parsePrice(price), [price]);
 
   const onAdd = () => {
-    addItem({ id, title, price: priceNum, image: image ?? undefined }, 1);
+    addItem({ id, title, price: priceNum, image: image ?? undefined }, quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   };
@@ -40,7 +41,7 @@ export default function AddToCartButton({ id, title, price, image, className, la
       }
     >
       <CartIcon className="w-5 h-5" />
-      {added ? "Added" : label ?? "Add to Cart"}
+      {added ? "Added" : `${label ?? "Add to Cart"}${quantity > 1 ? ` (${quantity})` : ''}`}
     </button>
   );
 }

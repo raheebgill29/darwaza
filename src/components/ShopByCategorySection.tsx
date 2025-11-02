@@ -32,24 +32,24 @@ export default function ShopByCategorySection() {
 
   const categories = [
     {
-      title: "Makeup",
-      image: "https://fastly.picsum.photos/id/64/4326/2884.jpg?hmac=9_SzX666YRpR_fOyYStXpfSiJ_edO3ghlSRnH2w09Kg",
-      href: "/categories/makeup",
+      title: "Clothes",
+      image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=2070&auto=format&fit=crop",
+      href: "/category/clothes",
     },
     {
-      title: "Skincare",
-      image: "https://fastly.picsum.photos/id/65/4912/3264.jpg?hmac=uq0IxYtPIqRKinGruj45KcPPzxDjQvErcxyS1tn7bG0",
-      href: "/categories/skincare",
+      title: "Accessories",
+      image: "https://images.unsplash.com/photo-1576053139778-7e32f2ae3cfd?q=80&w=2070&auto=format&fit=crop",
+      href: "/category/accessories",
     },
     {
-      title: "Foundation",
-      image: "https://fastly.picsum.photos/id/146/5000/3333.jpg?hmac=xdlFnzoavokA3U-bzo35Vk4jTBKx8C9fqH5IuCPXj2U",
-      href: "/categories/foundation",
+      title: "Jewelry",
+      image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=2070&auto=format&fit=crop",
+      href: "/category/jewelry",
     },
     {
       title: "New In",
       image: "https://fastly.picsum.photos/id/152/3888/2592.jpg?hmac=M1xv1MzO9xjf5-tz1hGR9bQpNt973ANkqfEVDW0-WYU",
-      href: "/categories/new-in",
+      href: "/category/new-in",
     },
   ];
 

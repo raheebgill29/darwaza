@@ -3,9 +3,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/lib/cartContext";
 import CartIcon from "@/components/icons/CartIcon";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const { items, count, total, increment, decrement, removeItem, clear } = useCart();
+  const router = useRouter();
 
   return (
     <div className="min-h-screen bg-brand-50 font-sans">
@@ -45,7 +47,10 @@ export default function CartPage() {
                 <CartIcon className="w-5 h-5" />
                 <span>Clear Cart</span>
               </button>
-              <button className="rounded-full border border-accent px-5 py-2 text-accent hover:bg-white/60 flex items-center gap-2">
+              <button 
+                onClick={() => router.push('/checkout')}
+                className="rounded-full border border-accent px-5 py-2 text-accent hover:bg-white/60 flex items-center gap-2"
+              >
                 <CartIcon className="w-5 h-5" />
                 <span>Checkout</span>
               </button>

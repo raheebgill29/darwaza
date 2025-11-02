@@ -1,52 +1,203 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/data/products";
 import AddToCartButton from "@/components/AddToCartButton";
+import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   product: Product;
 };
 
 export default function ProductDetail({ product }: Props) {
-  const { title, price, image, description, details, category } = product;
+  const { title, price, image, description, details, category, badge } = product;
+  const [selectedImage, setSelectedImage] = useState(image);
+  const [quantity, setQuantity] = useState(1);
+  
+  // For demo purposes - additional images
+  const additionalImages = [
+    image,
+    "https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=1000",
+    "https://images.unsplash.com/photo-1560343090-f0409e92791a?q=80&w=1000",
+  ];
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-8">
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <div className="rounded-2xl bg-brand-base p-4">
-          <Image
-            src={image}
-            alt={title}
-            width={800}
-            height={600}
-            className="rounded-xl object-cover"
-          />
+    <section className="mx-auto max-w-6xl px-4 py-12">
+      {/* Breadcrumb */}
+      <div className="mb-8">
+        <nav className="flex" aria-label="Breadcrumb">
+          <ol className="inline-flex items-center space-x-1 md:space-x-3">
+            <li className="inline-flex items-center">
+              <Link href="/" className="inline-flex items-center text-sm font-medium text-accent/70 hover:text-accent">
+                Home
+              </Link>
+            </li>
+            <li>
+              <div className="flex items-center">
+                <span className="mx-2 text-accent/70">/</span>
+                <Link href={`/products?category=${category}`} className="text-sm font-medium text-accent/70 hover:text-accent">
+                  {category}
+                </Link>
+              </div>
+            </li>
+            <li aria-current="page">
+              <div className="flex items-center">
+                <span className="mx-2 text-accent/70">/</span>
+                <span className="text-sm font-medium text-accent truncate max-w-[150px]">{title}</span>
+              </div>
+            </li>
+          </ol>
+        </nav>
+      </div>
+
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+        {/* Product Images */}
+        <div className="space-y-4">
+          <div className="relative overflow-hidden rounded-2xl bg-brand-base p-4 shadow-lg transition-all duration-300 hover:shadow-xl">
+            {badge && (
+              <div className="absolute top-6 left-6 z-10 rounded-full bg-accent px-3 py-1 text-sm font-medium text-white">
+                {badge}
+              </div>
+            )}
+            <div className="relative h-[400px] w-full overflow-hidden rounded-xl">
+              <Image
+                src={selectedImage}
+                alt={title}
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover transition-transform duration-700 hover:scale-105"
+                priority
+              />
+            </div>
+          </div>
+          
+          {/* Thumbnail Gallery */}
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {additionalImages.map((img, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedImage(img)}
+                className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
+                  selectedImage === img ? "border-accent" : "border-transparent"
+                }`}
+              >
+                <Image
+                  src={img}
+                  alt={`${title} thumbnail ${index + 1}`}
+                  fill
+                  sizes="80px"
+                  className="object-cover"
+                />
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div>
-          <p className="text-sm text-accent/70">{category}</p>
-          <h1 className="mt-1 text-3xl font-semibold text-accent">{title}</h1>
-          <p className="mt-2 text-xl text-accent">{price}</p>
-
-          <p className="mt-4 text-accent/90">{description}</p>
-
-          {details && (
-            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {Object.entries(details).map(([k, v]) => (
-                <div key={k} className="rounded-xl bg-brand-base/70 p-3">
-                  <p className="text-xs text-accent/70">{k}</p>
-                  <p className="text-accent">{v}</p>
+        {/* Product Info */}
+        <div className="flex flex-col justify-between">
+          <div>
+            <div className="mb-6 border-b border-accent/10 pb-4">
+              <div className="flex items-center gap-2">
+                <p className="rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent">{category}</p>
+                {badge && (
+                  <p className="rounded-full bg-accent px-3 py-1 text-sm font-medium text-white">
+                    {badge}
+                  </p>
+                )}
+              </div>
+              <h1 className="mt-3 text-4xl font-bold text-accent">{title}</h1>
+              <div className="mt-4 flex items-baseline gap-2">
+                <p className="text-2xl font-semibold text-accent">{price}</p>
+                {details?.["Original Price"] && (
+                  <p className="text-lg text-accent/60 line-through">{details["Original Price"]}</p>
+                )}
+              </div>
+              
+              {/* Rating Stars (Demo) */}
+              <div className="mt-3 flex items-center">
+                <div className="flex text-yellow-500">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                      <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+                    </svg>
+                  ))}
                 </div>
-              ))}
+                <p className="ml-2 text-sm text-accent/70">128 reviews</p>
+              </div>
             </div>
-          )}
 
-          <div className="mt-8 flex gap-3">
-            <AddToCartButton id={product.slug} title={title} price={price} image={image} />
-            <Link href="/" className="rounded-full border border-accent px-5 py-2 text-accent hover:bg-white/60">
-              Back to Home
-            </Link>
+            <div className="mb-6">
+              <h2 className="mb-2 text-xl font-semibold text-accent">Description</h2>
+              <p className="text-accent/90 leading-relaxed">{description}</p>
+            </div>
+
+            {details && (
+              <div className="mb-8">
+                <h2 className="mb-3 text-xl font-semibold text-accent">Product Details</h2>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {Object.entries(details)
+                    .filter(([k]) => k !== "Original Price")
+                    .map(([k, v]) => (
+                      <div key={k} className="rounded-xl bg-brand-base/70 p-4 shadow-sm transition-all hover:shadow-md">
+                        <p className="text-sm font-medium text-accent/70">{k}</p>
+                        <p className="text-accent font-medium">{v}</p>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
+
+          <div className="mt-8 space-y-4">
+            {/* Quantity Selector */}
+            <div className="flex items-center">
+              <span className="mr-4 text-accent font-medium">Quantity:</span>
+              <div className="flex items-center border border-accent/20 rounded-lg">
+                <button 
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  className="px-3 py-1 text-accent hover:bg-accent/10 transition-colors"
+                  aria-label="Decrease quantity"
+                >
+                  <MinusIcon className="h-4 w-4" />
+                </button>
+                <span className="px-4 py-1 text-accent font-medium min-w-[40px] text-center">{quantity}</span>
+                <button 
+                  onClick={() => setQuantity(q => q + 1)}
+                  className="px-3 py-1 text-accent hover:bg-accent/10 transition-colors"
+                  aria-label="Increase quantity"
+                >
+                  <PlusIcon className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="flex flex-wrap gap-4">
+              <AddToCartButton id={product.slug} title={title} price={price} image={image} quantity={quantity} />
+              <Link href="/" className="rounded-full border-2 border-accent px-6 py-2 text-accent transition-all hover:bg-accent hover:text-white">
+                Back to Home
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Related Products Section (Placeholder) */}
+      <div className="mt-16 border-t border-accent/10 pt-12">
+        <h2 className="mb-6 text-center text-2xl font-bold text-accent">You May Also Like</h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="rounded-xl bg-brand-base p-3 shadow-sm transition-all hover:shadow-md">
+              <div className="relative h-40 w-full overflow-hidden rounded-lg">
+                <div className="absolute inset-0 bg-accent/5 animate-pulse"></div>
+              </div>
+              <div className="mt-2">
+                <div className="h-4 w-3/4 rounded bg-accent/5 animate-pulse"></div>
+                <div className="mt-1 h-3 w-1/2 rounded bg-accent/5 animate-pulse"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
