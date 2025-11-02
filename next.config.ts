@@ -25,6 +25,16 @@ const remotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
     hostname: "picsum.photos",
     pathname: "**",
   },
+  {
+    protocol: "https",
+    hostname: "fastly.picsum.photos",
+    pathname: "**",
+  },
+  {
+    protocol: "https",
+    hostname: "images.pexels.com",
+    pathname: "**",
+  },
 ];
 
 if (supabaseHost) {
@@ -34,6 +44,7 @@ if (supabaseHost) {
 const nextConfig: NextConfig = {
   images: {
     remotePatterns,
+    qualities: [75, 100],
   },
 };
 

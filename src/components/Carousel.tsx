@@ -42,9 +42,9 @@ export default function Carousel() {
   const slide = slides[index];
 
   return (
-    <section aria-label="Promotions" className="mt-6">
-      <div className={`relative h-64 w-full overflow-hidden rounded-2xl bg-gradient-to-r ${slide.bg}`}>
-        <div className="flex h-full items-center justify-between p-6">
+    <section aria-label="Promotions">
+      <div className={`relative h-64 w-full overflow-hidden bg-gradient-to-r ${slide.bg}`}>
+        <div className="flex h-full items-center justify-between px-4 py-6">
           <div className="max-w-lg">
             <h2 className="text-2xl font-semibold text-accent">{slide.title}</h2>
             <p className="mt-2 text-accent/80">{slide.subtitle}</p>

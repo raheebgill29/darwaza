@@ -20,7 +20,7 @@ function formatPrice(p: number | string) {
   return `Rs ${num.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
 }
 
-export default async function CategoryProductsSection({ categoryName, title, limit = 8 }: Props) {
+async function getCategoryProducts({ categoryName, limit }: Props) {
   // Find category id by a case-insensitive match (handles "Dress"/"Dresses")
   const { data: cats, error: catErr } = await supabase
     .from("categories")
@@ -29,8 +29,7 @@ export default async function CategoryProductsSection({ categoryName, title, lim
     .limit(1);
 
   if (catErr || !cats || cats.length === 0) {
-    // Silently render nothing if category missing
-    return null;
+    return { items: [] };
   }
 
   const categoryId = cats[0].id as string;
@@ -44,7 +43,7 @@ export default async function CategoryProductsSection({ categoryName, title, lim
     .limit(limit);
 
   if (prodErr || !prods || prods.length === 0) {
-    return null;
+    return { items: [] };
   }
 
   const items = (prods as ProductRow[]).map((p) => {
@@ -59,10 +58,18 @@ export default async function CategoryProductsSection({ categoryName, title, lim
     };
   });
 
+  return { items };
+}
+
+export default async function CategoryProductsSection({ categoryName, title, limit = 8 }: Props) {
+  const { items } = await getCategoryProducts({ categoryName, limit });
+
+  if (items.length === 0) return null;
+
   return (
-    <section className="mx-auto max-w-6xl py-10">
-      {title && <h3 className="text-2xl font-semibold text-accent">{title}</h3>}
-      <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <section>
+      {title && <h3 className="text-2xl font-semibold">{title}</h3>}
+      <div className="grid grid-cols-3">
         {items.map((p) => (
           <ProductCard key={p.title} id={p.id} title={p.title} price={p.price} image={p.image} href={p.href} />
         ))}
