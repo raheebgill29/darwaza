@@ -8,6 +8,7 @@ import CartIcon from "./icons/CartIcon";
 
 export default function Navbar() {
   const [displayName, setDisplayName] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const { count } = useCart();
 
   useEffect(() => {
@@ -17,13 +18,17 @@ export default function Navbar() {
       if (!mounted) return;
       const user = data.user;
       const name = user?.user_metadata?.full_name as string | undefined;
+      const role = user?.user_metadata?.role as string | undefined;
       setDisplayName(name ?? user?.email ?? null);
+      setIsAdmin(role === "admin");
     });
     // Listen for auth changes
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       const user = session?.user;
       const name = user?.user_metadata?.full_name as string | undefined;
+      const role = user?.user_metadata?.role as string | undefined;
       setDisplayName(name ?? user?.email ?? null);
+      setIsAdmin(role === "admin");
     });
     return () => {
       mounted = false;
@@ -60,7 +65,7 @@ export default function Navbar() {
               </svg>
             </button>
             {displayName ? (
-              <Link href="/profile" className="text-accent hover:text-primary">
+              <Link href={isAdmin ? "/admin-dashboard" : "/profile"} className="text-accent hover:text-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
