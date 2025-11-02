@@ -16,28 +16,28 @@ const newArrivalsProducts: Product[] = [
     name: 'Brown Kimono',
     price: '$120.00',
     imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: '#',
+    href: '/products/classic-blazer',
   },
   {
     id: '2',
     name: 'Beige Pouch',
     price: '$45.00',
     imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: '#',
+    href: '/products/everyday-tote',
   },
   {
     id: '3',
     name: 'Brown Dress',
     price: '$90.00',
     imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: '#',
+    href: '/products/rose-midi-dress',
   },
   {
     id: '4',
     name: 'Gold Hoops',
     price: '$60.00',
     imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: '#',
+    href: '/products/petal-studs',
   },
 ];
 

@@ -13,35 +13,37 @@ export const products: Product[] = [
   // Clothes
   {
     slug: "rose-midi-dress",
-    title: "Rose Midi Dress",
+    title: "Brown Dress",
     category: "Clothes",
-    price: "Rs 4,500",
+    price: "$90.00",
     image:
-      "https://images.unsplash.com/photo-1520975666741-aabf2f5b1cb7?auto=format&fit=crop&w=800&h=600&q=70",
+      "https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY",
     description:
-      "A soft, flowy midi dress in a rose-toned fabric. Tailored waist with gentle pleats for an elegant silhouette.",
+      "Elegant brown dress with a modern silhouette. Perfect for both casual and formal occasions.",
     details: {
-      Material: "100% Viscose",
+      Material: "Polyester blend",
       Fit: "Regular",
       Care: "Machine wash cold",
-      Color: "Rose blush",
+      Color: "Brown",
     },
   },
   {
     slug: "soft-knit-top",
-    title: "Soft Knit Top",
+    title: "Brigette Longsleeve",
     category: "Clothes",
-    price: "Rs 2,100",
+    price: "120.00$",
     image:
-      "https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=800&h=600&q=70",
+      "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg",
     description:
-      "Cozy knit top with subtle ribbing and a relaxed neckline. Perfect for everyday layering.",
+      "Elegant longsleeve top with a comfortable fit. Perfect for casual and semi-formal occasions.",
     details: {
       Material: "Cotton blend",
-      Fit: "Relaxed",
-      Care: "Hand wash recommended",
-      Color: "Warm taupe",
+      Fit: "Regular",
+      Care: "Machine wash cold",
+      Color: "Multiple colors available",
+      "Original Price": "100.00$"
     },
+    badge: "-33%",
   },
   {
     slug: "flowy-skirt",
@@ -61,53 +63,57 @@ export const products: Product[] = [
   },
   {
     slug: "classic-blazer",
-    title: "Classic Blazer",
+    title: "Relay Track Pants",
     category: "Clothes",
-    price: "Rs 5,800",
+    price: "250.00$",
     image:
-      "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=800&h=600&q=70",
+      "https://images.pexels.com/photos/904350/pexels-photo-904350.jpeg",
     description:
-      "Tailored blazer with clean lines and soft structure. Versatile piece for work and evenings.",
+      "Comfortable track pants with modern design. Perfect for active lifestyles and casual wear.",
     details: {
-      Material: "Poly-cotton",
-      Fit: "Tailored",
-      Care: "Dry clean",
-      Color: "Charcoal cocoa",
+      Material: "Cotton blend",
+      Fit: "Regular",
+      Care: "Machine wash cold",
+      Color: "Black",
     },
   },
 
   // Accessories
   {
     slug: "everyday-tote",
-    title: "Everyday Tote",
+    title: "Idolize Tote Bag",
     category: "Accessories",
-    price: "Rs 2,900",
+    price: "116.00$",
     image:
-      "https://images.unsplash.com/photo-1512436991641-6745b483bdf2?auto=format&fit=crop&w=800&h=600&q=70",
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1974",
     description:
-      "Spacious tote with sturdy handles and interior pockets. Minimal design in soft rose tones.",
+      "Stylish tote bag with sturdy handles and interior pockets. Perfect for everyday use with a modern design.",
     details: {
-      Material: "PU leather",
-      Size: "40cm x 32cm",
+      Material: "Premium canvas",
+      Size: "42cm x 35cm",
       Care: "Wipe clean",
-      Color: "Blush",
+      Color: "Beige",
+      "Original Price": "200.00$"
     },
+    badge: "NEW",
   },
   {
     slug: "silk-scarf",
-    title: "Silk Scarf",
+    title: "Rectangular Sunglasses",
     category: "Accessories",
-    price: "Rs 1,500",
+    price: "110.00$",
     image:
-      "https://images.unsplash.com/photo-1520962919747-0db62351a250?auto=format&fit=crop&w=800&h=600&q=70",
+      "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg",
     description:
-      "Lightweight silk scarf with delicate sheen. Adds a soft touch to any outfit.",
+      "Stylish rectangular sunglasses with UV protection. Modern design that complements any outfit.",
     details: {
-      Material: "Silk",
-      Size: "90cm x 90cm",
-      Care: "Dry clean",
-      Color: "Rose print",
+      Material: "Acetate frame",
+      Size: "Standard",
+      Care: "Clean with microfiber cloth",
+      Color: "Black",
+      "Original Price": "120.00$"
     },
+    badge: "NEW",
   },
   {
     slug: "compact-wallet",
@@ -145,34 +151,34 @@ export const products: Product[] = [
   // Jewelry
   {
     slug: "petal-studs",
-    title: "Petal Studs",
+    title: "Gold Hoops",
     category: "Jewelry",
-    price: "Rs 1,200",
+    price: "$60.00",
     image:
-      "https://images.unsplash.com/photo-1518544801976-3e9aae69b2f5?auto=format&fit=crop&w=800&h=600&q=70",
+      "https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY",
     description:
-      "Minimal petal-shaped studs with a soft shine. Everyday earrings in a subtle rose hue.",
+      "Elegant gold hoop earrings that add a touch of sophistication to any outfit. Perfect for everyday wear or special occasions.",
     details: {
-      Material: "Stainless steel",
-      Finish: "Rose gold",
-      Care: "Avoid water",
-      Color: "Rose gold",
+      Material: "Gold-plated brass",
+      Size: "Medium",
+      Care: "Store in jewelry box when not in use",
+      Color: "Gold",
     },
   },
   {
     slug: "rose-pendant",
-    title: "Rose Pendant",
-    category: "Jewelry",
-    price: "Rs 2,300",
+    title: "Polarised Sunglasses",
+    category: "Accessories",
+    price: "200.00$",
     image:
-      "https://images.unsplash.com/photo-1542332213-32a0d66f2b1f?auto=format&fit=crop&w=800&h=600&q=70",
+      "https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY",
     description:
-      "Pendant necklace with a delicate rose charm. Adjustable chain length for versatile styling.",
+      "High-quality polarised sunglasses that reduce glare and provide UV protection. Stylish design for everyday wear.",
     details: {
-      Material: "Alloy",
-      Finish: "Rose gold",
-      Length: "45cm + 5cm",
-      Care: "Avoid perfume",
+      Material: "Metal frame with polarised lenses",
+      Size: "Standard",
+      Care: "Store in case when not in use",
+      Color: "Gold/Brown",
     },
   },
   {
