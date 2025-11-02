@@ -1,16 +1,35 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
+  
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
+  };
+
   return (
     <div className="min-h-screen bg-brand-50 font-sans">
       <Navbar />
       <main className="mx-auto max-w-6xl px-4 py-10">
-        <h1 className="text-3xl font-semibold text-accent">Admin Dashboard</h1>
-        <p className="mt-2 text-accent/80">Manage products, categories, and view orders.</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-semibold text-accent">Admin Dashboard</h1>
+            <p className="mt-2 text-accent/80">Manage products, categories, and view orders.</p>
+          </div>
+          <button 
+            onClick={handleLogout}
+            className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/80"
+          >
+            Logout
+          </button>
+        </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <Link
