@@ -20,7 +20,7 @@ function formatPrice(p: number | string) {
   return `Rs ${num.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
 }
 
-async function getCategoryProducts({ categoryName, limit }: Props) {
+async function getCategoryProducts({ categoryName, limit = 8 }: Props) {
   // Find category id by a case-insensitive match (handles "Dress"/"Dresses")
   const { data: cats, error: catErr } = await supabase
     .from("categories")

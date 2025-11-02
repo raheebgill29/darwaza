@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import HoverInfoOverlay from '@/components/HoverInfoOverlay';
 
 interface Product {
   id: string;
@@ -78,13 +79,14 @@ const ProductGridSection: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <Link href={product.href} key={product.id} className="group block">
-            <div className="relative w-full h-[350px] bg-gray-100 rounded-lg overflow-hidden">
+            <div className="group relative w-full h-[350px] bg-gray-100 rounded-lg overflow-hidden">
               <Image
                 src={product.imageUrl}
                 alt={product.name}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
+              <HoverInfoOverlay title={product.name} price={product.price} />
               {(product.discount || product.isNew) && (
                 <div className="absolute top-2 left-2 flex space-x-1">
                   {product.discount && (
@@ -100,26 +102,7 @@ const ProductGridSection: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="mt-4 text-center">
-              <h3 className="text-lg font-medium text-gray-900">{product.name}</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                {product.originalPrice && (
-                  <span className="line-through mr-1">{product.originalPrice}</span>
-                )}
-                {product.price}
-              </p>
-              {product.colors && (
-                <div className="flex justify-center mt-2 space-x-1">
-                  {product.colors.map((color, index) => (
-                    <span
-                      key={index}
-                      className="w-3 h-3 rounded-full border border-gray-300"
-                      style={{ backgroundColor: color }}
-                    ></span>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* Removed below-the-card name/price; they now appear on hover over the card */}
           </Link>
         ))}
       </div>
