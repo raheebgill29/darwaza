@@ -38,7 +38,7 @@ export default function FilterSidebar({
     
     if (currentPriceRanges.includes(value)) {
       // Remove the value if it's already selected
-      newPriceRanges = currentPriceRanges.filter(range => range !== value);
+      newPriceRanges = currentPriceRanges.filter((range: string) => range !== value);
     } else {
       // Add the value if it's not selected
       newPriceRanges = [...currentPriceRanges, value];

@@ -16,9 +16,9 @@ import NewsletterSubscribe from "@/components/NewsletterSubscribe";
 export default function CategoryPage() {
   const params = useParams();
   const slug = params?.slug as string;
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [sortOption, setSortOption] = useState("featured");
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{priceRange: string[]}>({
     priceRange: [],
   });
   const category = getCategoryBySlug(slug);
@@ -80,11 +80,11 @@ export default function CategoryPage() {
     );
   }
 
-  const handleSortChange = (option) => {
+  const handleSortChange = (option: string) => {
     setSortOption(option);
   };
 
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = (newFilters: {priceRange: string[]}) => {
     setFilters(newFilters);
   };
 
