@@ -7,9 +7,11 @@ export type CategoryImageUpload = { file?: File | null; alt: string }
 export default function CategoryImageUpload({
   image,
   onChange,
+  previewUrl,
 }: {
   image: CategoryImageUpload
   onChange: (image: CategoryImageUpload) => void
+  previewUrl?: string | null
 }) {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -26,6 +28,8 @@ export default function CategoryImageUpload({
   const updateAlt = useCallback((alt: string) => {
     onChange({ ...image, alt })
   }, [image, onChange])
+
+  const effectivePreview = image.file ? URL.createObjectURL(image.file) : (previewUrl || null)
 
   return (
     <div className="rounded-xl border border-brand-200 bg-brand-base p-3">
@@ -49,11 +53,11 @@ export default function CategoryImageUpload({
         </div>
       </div>
 
-      {image.file && (
+      {effectivePreview && (
         <div className="mt-3 flex items-center gap-2 rounded-lg border border-brand-200 p-2">
           <div className="h-16 w-16 overflow-hidden rounded-md bg-brand-100">
             <img
-              src={URL.createObjectURL(image.file)}
+              src={effectivePreview}
               alt={image.alt}
               className="h-full w-full object-cover"
             />

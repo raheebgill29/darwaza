@@ -41,6 +41,14 @@ export default function AdminDashboardPage() {
           </Link>
 
           <Link
+            href="/admin-dashboard/edit-categories"
+            className="rounded-xl border border-brand-200 bg-brand-base px-4 py-6 hover:opacity-90"
+          >
+            <h2 className="text-xl font-semibold text-accent">Edit Categories</h2>
+            <p className="text-accent/70">Update names, images, and properties.</p>
+          </Link>
+
+          <Link
             href="/admin-dashboard/add-product"
             className="rounded-xl border border-brand-200 bg-brand-base px-4 py-6 hover:opacity-90"
           >
