@@ -19,7 +19,7 @@ export default function CartPage() {
         ) : (
           <div className="mt-4 space-y-4">
             {items.map((it) => (
-              <div key={it.id} className="flex items-center gap-4 rounded-xl border border-brand-200 bg-brand-base p-3">
+              <div key={`${it.id}-${it.size ?? 'nosize'}`} className="flex items-center gap-4 rounded-xl border border-brand-200 bg-brand-base p-3">
                 {it.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={it.image} alt={it.title} className="h-16 w-16 rounded object-cover" />
@@ -28,14 +28,15 @@ export default function CartPage() {
                 )}
                 <div className="flex-1">
                   <p className="font-semibold text-accent">{it.title}</p>
+                  {it.size && <p className="text-xs text-accent/60">Size: {it.size}</p>}
                   <p className="text-accent/80">Rs {it.price.toLocaleString("en-IN")}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => decrement(it.id)} className="rounded-full bg-brand-base px-3 py-1 text-accent">-</button>
+                  <button onClick={() => decrement(it.id, it.size)} className="rounded-full bg-brand-base px-3 py-1 text-accent">-</button>
                   <span className="min-w-6 text-center text-accent">{it.qty}</span>
-                  <button onClick={() => increment(it.id)} className="rounded-full bg-brand-base px-3 py-1 text-accent">+</button>
+                  <button onClick={() => increment(it.id, it.size)} className="rounded-full bg-brand-base px-3 py-1 text-accent">+</button>
                 </div>
-                <button onClick={() => removeItem(it.id)} className="rounded-full border border-accent px-3 py-1 text-accent hover:bg-white/60">Remove</button>
+                <button onClick={() => removeItem(it.id, it.size)} className="rounded-full border border-accent px-3 py-1 text-accent hover:bg-white/60">Remove</button>
               </div>
             ))}
             <div className="flex items-center justify-between rounded-xl bg-brand-base p-4">

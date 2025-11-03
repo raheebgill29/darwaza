@@ -8,6 +8,7 @@ type CartItem = {
   price: number;
   image?: string | null;
   qty: number;
+  size?: string;
 };
 
 export type OrderRow = {

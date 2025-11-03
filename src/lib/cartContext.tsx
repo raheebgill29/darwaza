@@ -7,6 +7,7 @@ export type CartItem = {
   price: number;
   image?: string | null;
   qty: number;
+  size?: string; // optional variant size
 };
 
 type CartContextType = {
@@ -14,9 +15,9 @@ type CartContextType = {
   count: number;
   total: number;
   addItem: (item: Omit<CartItem, "qty">, qty?: number) => void;
-  removeItem: (id: string) => void;
-  increment: (id: string) => void;
-  decrement: (id: string) => void;
+  removeItem: (id: string, size?: string) => void;
+  increment: (id: string, size?: string) => void;
+  decrement: (id: string, size?: string) => void;
   clear: () => void;
 };
 
@@ -62,25 +63,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback((item: Omit<CartItem, "qty">, qty: number = 1) => {
     setItems((prev) => {
-      const existing = prev.find((it) => it.id === item.id);
+      const existing = prev.find((it) => it.id === item.id && it.size === item.size);
       if (existing) {
-        return prev.map((it) => (it.id === item.id ? { ...it, qty: it.qty + qty } : it));
+        return prev.map((it) => (it.id === item.id && it.size === item.size ? { ...it, qty: it.qty + qty } : it));
       }
       return [...prev, { ...item, qty }];
     });
   }, []);
 
-  const removeItem = useCallback((id: string) => {
-    setItems((prev) => prev.filter((it) => it.id !== id));
+  const removeItem = useCallback((id: string, size?: string) => {
+    setItems((prev) => prev.filter((it) => !(it.id === id && (size === undefined || it.size === size))));
   }, []);
 
-  const increment = useCallback((id: string) => {
-    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, qty: it.qty + 1 } : it)));
+  const increment = useCallback((id: string, size?: string) => {
+    setItems((prev) => prev.map((it) => (it.id === id && (size === undefined || it.size === size) ? { ...it, qty: it.qty + 1 } : it)));
   }, []);
 
-  const decrement = useCallback((id: string) => {
+  const decrement = useCallback((id: string, size?: string) => {
     setItems((prev) => prev
-      .map((it) => (it.id === id ? { ...it, qty: Math.max(0, it.qty - 1) } : it))
+      .map((it) => (it.id === id && (size === undefined || it.size === size) ? { ...it, qty: Math.max(0, it.qty - 1) } : it))
       .filter((it) => it.qty > 0));
   }, []);
 

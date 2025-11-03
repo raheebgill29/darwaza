@@ -56,10 +56,52 @@ export default function CheckoutPage() {
         .select();
       
       if (error) throw error;
+      const orderId = data?.[0]?.id;
+
+      // Deduct stock for each item (product and per-size when applicable)
+      for (const it of items) {
+        const productId = it.id; // for DB-backed products, this is the product.id
+        // Fetch product to ensure it exists in DB and get current stock
+        const { data: prod, error: pErr } = await supabase
+          .from('products')
+          .select('id, stock')
+          .eq('id', productId)
+          .single();
+        if (pErr || !prod) {
+          // Skip deduction for non-DB products
+          continue;
+        }
+
+        // Check if product has per-size stock rows
+        const { data: sizeRows } = await supabase
+          .from('product_sizes')
+          .select('size, stock')
+          .eq('product_id', productId);
+
+        // Always reduce overall product stock
+        const newTotalStock = Math.max(0, (prod.stock ?? 0) - it.qty);
+        await supabase
+          .from('products')
+          .update({ stock: newTotalStock })
+          .eq('id', productId);
+
+        // If sizes exist and item has a selected size, deduct from that size's stock
+        if ((sizeRows && sizeRows.length > 0) && it.size) {
+          const row = sizeRows.find((r: any) => r.size === it.size);
+          if (row) {
+            const newSizeStock = Math.max(0, (row.stock ?? 0) - it.qty);
+            await supabase
+              .from('product_sizes')
+              .update({ stock: newSizeStock })
+              .eq('product_id', productId)
+              .eq('size', it.size);
+          }
+        }
+      }
       
       // Clear cart and redirect to success page
       clear();
-      router.push(`/order-success?id=${data[0].id}`);
+      router.push(`/order-success?id=${orderId}`);
     } catch (error) {
       console.error("Error placing order:", error);
       alert("Failed to place order. Please try again.");
@@ -222,7 +264,7 @@ export default function CheckoutPage() {
             <div className="mt-4 rounded-md border border-brand-200 bg-white p-4">
               <div className="space-y-3">
                 {items.map((item) => (
-                  <div key={item.id} className="flex items-center gap-3">
+                  <div key={`${item.id}-${item.size ?? 'nosize'}`} className="flex items-center gap-3">
                     {item.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={item.image} alt={item.title} className="h-12 w-12 rounded object-cover" />
@@ -231,6 +273,9 @@ export default function CheckoutPage() {
                     )}
                     <div className="flex-1">
                       <p className="font-medium text-accent">{item.title}</p>
+                      {item.size && (
+                        <p className="text-xs text-accent/70">Size: {item.size}</p>
+                      )}
                       <p className="text-sm text-accent/80">
                         Rs {item.price.toLocaleString("en-IN")} × {item.qty}
                       </p>

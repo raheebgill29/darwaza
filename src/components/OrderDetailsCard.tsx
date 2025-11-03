@@ -81,6 +81,7 @@ export default function OrderDetailsCard({ order }: Props) {
               )}
               <div className="flex-1">
                 <p className="font-medium text-accent">{item.title}</p>
+                {item.size && <p className="text-xs text-accent/60">Size: {item.size}</p>}
                 <p className="text-sm text-accent/80">Rs {item.price.toLocaleString("en-IN")} × {item.qty}</p>
               </div>
               <p className="font-medium text-accent">Rs {(item.price * item.qty).toLocaleString("en-IN")}</p>

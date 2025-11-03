@@ -19,16 +19,17 @@ type Props = {
   label?: string; // default: "Add to Cart"
   quantity?: number; // default: 1
   disabled?: boolean; // optional disabled state
+  selectedSize?: string; // optional size variant
 };
 
-export default function AddToCartButton({ id, title, price, image, className, label, quantity = 1, disabled = false }: Props) {
+export default function AddToCartButton({ id, title, price, image, className, label, quantity = 1, disabled = false, selectedSize }: Props) {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
   const priceNum = useMemo(() => parsePrice(price), [price]);
 
   const onAdd = () => {
     if (disabled || quantity <= 0) return;
-    addItem({ id, title, price: priceNum, image: image ?? undefined }, quantity);
+    addItem({ id, title, price: priceNum, image: image ?? undefined, size: selectedSize }, quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   };

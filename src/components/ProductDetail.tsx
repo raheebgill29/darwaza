@@ -8,6 +8,8 @@ import { products as dataProducts } from "@/data/products";
 import ProductCard from "@/components/ProductCard";
 import AddToCartButton from "@/components/AddToCartButton";
 import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
+import SizeQuantityTable from "@/components/SizeQuantityTable";
+import AddSelectedSizesButton from "@/components/AddSelectedSizesButton";
 
 type Props = {
   product: Product;
@@ -21,6 +23,9 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
   // Use provided gallery from props; fall back to the single product image
   const gallery = (images && images.length > 0) ? images : [image];
   const [selectedImage, setSelectedImage] = useState(gallery[0]);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [sizeCount, setSizeCount] = useState<number>(0);
+  const [sizeQuantities, setSizeQuantities] = useState<Record<string, number>>({});
 
   // Keep selectedImage in sync if gallery updates (e.g., after async fetch)
   useEffect(() => {
@@ -173,7 +178,30 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
           </div>
 
           <div className="mt-8 space-y-4">
+            {/* Per-size stock table (if sizes exist) */}
+            <SizeQuantityTable
+              productId={product.slug}
+              selectable
+              selectedSize={selectedSize}
+              onSelect={(sz) => setSelectedSize(sz)}
+              allowQuantityInput
+              selectedQuantities={sizeQuantities}
+              onQuantitiesChange={(map) => setSizeQuantities(map)}
+              onLoaded={(rows) => setSizeCount(rows.length)}
+              className="rounded-xl border border-brand-200 bg-white p-3"
+            />
+            {/* Add selected per-size quantities */}
+            <AddSelectedSizesButton
+              productId={product.slug}
+              title={title}
+              price={price}
+              image={image}
+              sizeQuantities={sizeQuantities}
+              label="Add Selected Sizes"
+              className="w-full rounded-full bg-brand-base px-5 py-3 text-accent hover:opacity-90"
+            />
             {/* Quantity Selector */}
+            {sizeCount <= 1 && (
             <div className="flex items-center">
               <span className="mr-4 text-accent font-medium">Quantity:</span>
               <div className="flex items-center border border-accent/20 rounded-lg">
@@ -195,13 +223,14 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
                 </button>
               </div>
             </div>
+            )}
             {/* Stock info */}
             {effectiveMax !== Number.POSITIVE_INFINITY && (
               <p className="text-sm text-accent/70">{effectiveMax > 0 ? `In stock: ${effectiveMax}` : 'Out of stock'}</p>
             )}
             
             <div className="flex flex-wrap gap-4">
-              <AddToCartButton id={product.slug} title={title} price={price} image={image} quantity={quantity} disabled={effectiveMax === 0} />
+              <AddToCartButton id={product.slug} title={title} price={price} image={image} quantity={quantity} disabled={effectiveMax === 0} selectedSize={selectedSize ?? undefined} />
               <Link href="/" className="rounded-full border-2 border-accent px-6 py-2 text-accent transition-all hover:bg-accent hover:text-white">
                 Back to Home
               </Link>
