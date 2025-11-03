@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import HoverInfoOverlay from '@/components/HoverInfoOverlay';
+import { supabase } from '@/lib/supabaseClient';
 
 interface Product {
   id: string;
@@ -15,21 +16,43 @@ interface Product {
   colors?: string[];
 }
 
-import { products as dataProducts } from "@/data/products";
+function formatPrice(num: number | string) {
+  const n = typeof num === 'string' ? parseFloat(num) : num;
+  if (Number.isNaN(n)) return `${num}`;
+  return `Rs ${n.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+}
 
-// Map data products to the format needed for this component
-const products: Product[] = dataProducts.slice(0, 6).map(product => ({
-  id: product.slug,
-  name: product.title,
-  price: product.price,
-  originalPrice: product.details?.["Original Price"],
-  imageUrl: product.image,
-  href: `/products/${product.slug}`,
-  discount: product.badge,
-  isNew: product.badge === "NEW",
-}));
+async function fetchTopRated(limit: number = 8): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('id,name,price,product_images(image_url,order_index),top_rated,new_arrival,featured')
+    .eq('top_rated', true)
+    .order('created_at', { ascending: false })
+    .limit(limit);
 
-const ProductGridSection: React.FC = () => {
+  if (error || !data) return [];
+
+  const rows = data as any[];
+  return rows.map((p) => {
+    const imgs = (p.product_images ?? []).sort(
+      (a: any, b: any) => (a.order_index ?? 0) - (b.order_index ?? 0)
+    );
+    const image = imgs[0]?.image_url || 'https://via.placeholder.com/800x800';
+    return {
+      id: p.id,
+      name: p.name,
+      price: formatPrice(p.price),
+      originalPrice: undefined,
+      imageUrl: image,
+      href: `/db-products/${p.id}`,
+      discount: p.featured ? 'FEATURED' : undefined,
+      isNew: Boolean(p.new_arrival),
+    } as Product;
+  });
+}
+
+const ProductGridSection: React.FC = async () => {
+  const products = await fetchTopRated(8);
   return (
     <section className="py-10 px-4 max-w-7xl mx-auto">
       <div className="flex justify-center items-center mb-8">

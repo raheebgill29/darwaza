@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { products as dataProducts } from "@/data/products";
+import { supabase } from "@/lib/supabaseClient";
 
 interface Product {
   id: string;
@@ -14,60 +15,88 @@ interface Product {
   quote: string;
 }
 
-// Map product data to showcase format
-const showcaseProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Idolize Tote Bag',
-    price: 'Rs 4,500',
-    imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1974',
-    href: `/products/${dataProducts.find(p => p.title === 'Idolize Tote Bag')?.slug || 'everyday-tote'}`,
-    quote: 'Elegance is the only beauty that never fades. Embrace timeless style with our signature collection.',
-  },
-  {
-    id: '2',
-    name: 'Rectangular Sunglasses',
-    price: 'Rs 5,800',
-    imageUrl: 'https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg',
-    href: `/products/${dataProducts.find(p => p.title === 'Rectangular Sunglasses')?.slug || 'silk-scarf'}`,
-    quote: 'Confidence comes from within, but a well-tailored accessory helps. Discover style redefined.',
-  },
-  {
-    id: '3',
-    name: 'Necessary Scarf',
-    price: 'Rs 1,500',
-    imageUrl: 'https://images.unsplash.com/photo-1617922001439-4a2e6562f328?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fG1vZGVsJTIwcG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600',
-    href: '/products/compact-wallet',
-    quote: 'The finishing touch that speaks volumes. Our accessories add subtle luxury to every outfit.',
-  },
-  {
-    id: '4',
-    name: 'Relay Track Pants',
-    price: 'Rs 2,900',
-    imageUrl: 'https://images.pexels.com/photos/904350/pexels-photo-904350.jpeg',
-    href: `/products/${dataProducts.find(p => p.title === 'Relay Track Pants')?.slug || 'classic-blazer'}`,
-    quote: 'Carry your world with style. Thoughtfully designed for the modern lifestyle.',
-  },
-  {
-    id: '5',
-    name: 'Polarised Sunglasses',
-    price: 'Rs 2,300',
-    imageUrl: 'https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY',
-    href: `/products/${dataProducts.find(p => p.title === 'Polarised Sunglasses')?.slug || 'rose-pendant'}`,
-    quote: 'Adorn yourself with pieces that tell your story. Accessories that become a part of you.',
-  }
+// Default quotes to keep the section's style intact
+const defaultQuotes = [
+  'Elegance is the only beauty that never fades. Embrace timeless style with our signature collection.',
+  'Confidence comes from within, but a well-tailored accessory helps. Discover style redefined.',
+  'The finishing touch that speaks volumes. Our accessories add subtle luxury to every outfit.',
+  'Carry your world with style. Thoughtfully designed for the modern lifestyle.',
+  'Adorn yourself with pieces that tell your story. Accessories that become a part of you.',
 ];
+
+function formatPrice(num: number | string) {
+  const n = typeof num === 'string' ? parseFloat(num) : num;
+  if (Number.isNaN(n)) return `${num}`;
+  return `Rs ${n.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+}
+
+// Fallback showcase built from local data to preserve section visuals if DB has none
+const fallbackShowcase: Product[] = dataProducts.slice(0, 5).map((p, idx) => ({
+  id: `local-${idx + 1}`,
+  name: p.title,
+  price: p.price,
+  imageUrl: p.image,
+  href: `/products/${p.slug}`,
+  quote: defaultQuotes[idx % defaultQuotes.length],
+}));
 
 export default function AnimatedProductShowcase() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
+  const [items, setItems] = useState<Product[]>(fallbackShowcase);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const transitionDuration = 500; // ms
   const displayDuration = 5000; // ms
 
-  const currentProduct = showcaseProducts[currentIndex];
+  const currentProduct = items[currentIndex];
   const isEven = currentIndex % 2 === 0;
+
+  // Fetch new-arrival products from DB, map to showcase items while preserving style
+  useEffect(() => {
+    let mounted = true;
+    async function fetchNewArrivals() {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('id,name,price,product_images(image_url,order_index)')
+          .eq('new_arrival', true)
+          .order('created_at', { ascending: false })
+          .limit(5);
+        if (error) throw error;
+        const rows = (data ?? []) as any[];
+        if (!mounted) return;
+        if (rows.length === 0) {
+          setItems(fallbackShowcase);
+          return;
+        }
+        const mapped: Product[] = rows.map((p, idx) => {
+          const imgs = (p.product_images ?? []).sort(
+            (a: any, b: any) => (a.order_index ?? 0) - (b.order_index ?? 0)
+          );
+          const image = imgs[0]?.image_url || 'https://via.placeholder.com/800x800';
+          return {
+            id: p.id,
+            name: p.name,
+            price: formatPrice(p.price),
+            imageUrl: image,
+            href: `/db-products/${p.id}`,
+            quote: defaultQuotes[idx % defaultQuotes.length],
+          };
+        });
+        setItems(mapped);
+      } catch (err) {
+        // On error, keep fallback to avoid breaking UI
+        setItems(fallbackShowcase);
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch new arrivals:', err);
+      }
+    }
+    fetchNewArrivals();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Auto-advance slides
   useEffect(() => {
@@ -110,12 +139,12 @@ export default function AnimatedProductShowcase() {
   };
 
   const goToNext = () => {
-    const nextIndex = (currentIndex + 1) % showcaseProducts.length;
+    const nextIndex = (currentIndex + 1) % items.length;
     goToSlide(nextIndex, 'next');
   };
 
   const goToPrev = () => {
-    const prevIndex = (currentIndex - 1 + showcaseProducts.length) % showcaseProducts.length;
+    const prevIndex = (currentIndex - 1 + items.length) % items.length;
     goToSlide(prevIndex, 'prev');
   };
 
@@ -185,7 +214,7 @@ export default function AnimatedProductShowcase() {
           </button>
           
           <div className="flex items-center gap-2">
-            {showcaseProducts.map((_, index) => (
+            {items.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index, index > currentIndex ? 'next' : 'prev')}
