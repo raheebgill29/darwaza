@@ -191,15 +191,17 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
               className="rounded-xl border border-brand-200 bg-white p-3"
             />
             {/* Add selected per-size quantities */}
-            <AddSelectedSizesButton
-              productId={product.slug}
-              title={title}
-              price={price}
-              image={image}
-              sizeQuantities={sizeQuantities}
-              label="Add Selected Sizes"
-              className="w-full rounded-full bg-brand-base px-5 py-3 text-accent hover:opacity-90"
-            />
+            {sizeCount > 0 && (
+              <AddSelectedSizesButton
+                productId={product.slug}
+                title={title}
+                price={price}
+                image={image}
+                sizeQuantities={sizeQuantities}
+                label="Add Selected Sizes"
+                className="w-full rounded-full bg-brand-base px-5 py-3 text-accent hover:opacity-90"
+              />
+            )}
             {/* Quantity Selector */}
             {sizeCount <= 1 && (
             <div className="flex items-center">
