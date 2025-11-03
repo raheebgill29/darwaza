@@ -6,8 +6,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { useCart } from "@/lib/cartContext";
 import { useWishlist } from "@/lib/wishlistContext";
 import CartIcon from "./icons/CartIcon";
-import { scrollToSection } from "@/lib/scrollToSection";
 import MobileMenu from "@/components/MobileMenu";
+import NavLinks from "@/components/NavLinks";
 
 export default function Navbar() {
   const [displayName, setDisplayName] = useState<string | null>(null);
@@ -106,12 +106,10 @@ export default function Navbar() {
             </Link>
           </div>
         </div>
-        <nav className="mt-4 hidden md:flex items-center justify-center gap-6 text-sm font-medium">
-          <Link href="/" className="text-accent hover:text-primary">Home</Link>
-          <button onClick={() => scrollToSection('shop-by-category')} className="text-accent hover:text-primary">Shop</button>
-          <button onClick={() => scrollToSection('new-arrivals')} className="text-accent hover:text-primary">New Arrivals</button>
-          <button onClick={() => scrollToSection('top-rated')} className="text-accent hover:text-primary">Top Rated</button>
-        </nav>
+        {/* Mobile: show primary nav links below the header */}
+        <NavLinks className="mt-3 flex md:hidden" />
+        {/* Desktop: show primary nav links centered */}
+        <NavLinks className="mt-4 hidden md:flex" />
       </div>
     </header>
   );
