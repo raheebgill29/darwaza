@@ -2,6 +2,9 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import CategoryImageUpload from './CategoryImageUpload'
+import { uploadProductImages } from '@/lib/uploadProductImages'
+import type { CategoryImageUpload as CategoryImageType } from './CategoryImageUpload'
 
 export default function CategoryForm() {
   const [name, setName] = useState('')
@@ -9,6 +12,7 @@ export default function CategoryForm() {
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [categoryImage, setCategoryImage] = useState<CategoryImageType>({ file: null, alt: '' })
 
   function addProperty() {
     setProperties((prev) => [...prev, ''])
@@ -43,11 +47,28 @@ export default function CategoryForm() {
     }
     setSaving(true)
     try {
+      // Upload image if provided
+      let imageUrl = null
+      if (categoryImage.file) {
+        const categoryId = `category-${Date.now()}`
+        const images = await uploadProductImages(
+          categoryId,
+          [{ file: categoryImage.file, alt: categoryImage.alt || trimmedName }]
+        )
+        if (images && images.length > 0) {
+          imageUrl = images[0].image_url
+        }
+      }
+      
       // Try inserting a new category; if it exists, fetch its id
       let categoryId: string | null = null
       const { data: inserted, error: insertErr } = await supabase
         .from('categories')
-        .insert({ name: trimmedName })
+        .insert({ 
+          name: trimmedName,
+          image_url: imageUrl,
+          image_alt: categoryImage.alt || trimmedName
+        })
         .select('id')
         .single()
 
@@ -81,6 +102,11 @@ export default function CategoryForm() {
       }
 
       setMessage(`Category saved${uniquePropNames.length ? ` with ${uniquePropNames.length} propert${uniquePropNames.length === 1 ? 'y' : 'ies'}` : ''}.`)
+      
+      // Reset form after successful save
+      setName('')
+      setProperties([''])
+      setCategoryImage({ file: null, alt: '' })
     } catch (err: any) {
       const msg = err?.message ?? 'Failed to save category. Ensure migration is applied.'
       setError(msg)
@@ -103,6 +129,8 @@ export default function CategoryForm() {
           required
         />
       </div>
+
+      <CategoryImageUpload image={categoryImage} onChange={setCategoryImage} />
 
       <div>
         <div className="flex items-center justify-between">
