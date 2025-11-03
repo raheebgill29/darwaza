@@ -76,7 +76,7 @@ export default function ProductDetail({ product, images, relatedProducts }: Prop
                 {badge}
               </div>
             )}
-            <div className="relative h-[400px] w-full overflow-hidden rounded-xl">
+            <div className="relative h-[560px] md:h-[680px] w-full overflow-hidden rounded-xl">
               <Image
                 src={selectedImage}
                 alt={title}
