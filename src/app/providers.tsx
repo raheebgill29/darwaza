@@ -2,11 +2,14 @@
 import React from "react";
 import { CartProvider } from "@/lib/cartContext";
 import { WishlistProvider } from "@/lib/wishlistContext";
+import { ToastProvider } from "@/lib/toastContext";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <WishlistProvider>
-      <CartProvider>{children}</CartProvider>
-    </WishlistProvider>
+    <ToastProvider>
+      <WishlistProvider>
+        <CartProvider>{children}</CartProvider>
+      </WishlistProvider>
+    </ToastProvider>
   );
 }

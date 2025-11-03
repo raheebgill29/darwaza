@@ -20,16 +20,34 @@ type Props = {
   quantity?: number; // default: 1
   disabled?: boolean; // optional disabled state
   selectedSize?: string; // optional size variant
+  sizeQuantities?: Record<string, number>; // optional per-size quantities (multi-add)
 };
 
-export default function AddToCartButton({ id, title, price, image, className, label, quantity = 1, disabled = false, selectedSize }: Props) {
+export default function AddToCartButton({ id, title, price, image, className, label, quantity = 1, disabled = false, selectedSize, sizeQuantities }: Props) {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
   const priceNum = useMemo(() => parsePrice(price), [price]);
+  const totalSelected = useMemo(() => {
+    if (!sizeQuantities) return 0;
+    return Object.values(sizeQuantities).reduce((sum, q) => sum + (Number(q) || 0), 0);
+  }, [sizeQuantities]);
+
+  const isDisabled = disabled || (sizeQuantities ? totalSelected <= 0 : quantity <= 0);
 
   const onAdd = () => {
-    if (disabled || quantity <= 0) return;
-    addItem({ id, title, price: priceNum, image: image ?? undefined, size: selectedSize }, quantity);
+    if (isDisabled) return;
+    // If per-size quantities are provided, add each selected size with its quantity
+    if (sizeQuantities) {
+      for (const [size, qtyRaw] of Object.entries(sizeQuantities)) {
+        const qty = Number(qtyRaw) || 0;
+        if (qty > 0) {
+          addItem({ id, title, price: priceNum, image: image ?? undefined, size }, qty);
+        }
+      }
+    } else {
+      // Fallback to single add behavior
+      addItem({ id, title, price: priceNum, image: image ?? undefined, size: selectedSize }, quantity);
+    }
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   };
@@ -38,10 +56,10 @@ export default function AddToCartButton({ id, title, price, image, className, la
     <button
       type="button"
       onClick={onAdd}
-      disabled={disabled}
+      disabled={isDisabled}
       className={
         className ??
-        `rounded-full bg-brand-base px-5 py-2 text-accent flex items-center justify-center gap-2 ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`
+        `rounded-full bg-brand-base px-5 py-2 text-accent flex items-center justify-center gap-2 ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`
       }
     >
       <CartIcon className="w-5 h-5" />

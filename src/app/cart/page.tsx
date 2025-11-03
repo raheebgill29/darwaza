@@ -4,10 +4,26 @@ import Footer from "@/components/Footer";
 import { useCart } from "@/lib/cartContext";
 import CartIcon from "@/components/icons/CartIcon";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+import { useToast } from "@/lib/toastContext";
 
 export default function CartPage() {
   const { items, count, total, increment, decrement, removeItem, clear } = useCart();
   const router = useRouter();
+  const { addToast } = useToast();
+
+  const handleCheckout = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        router.push('/checkout');
+      } else {
+        addToast("User must be logged in to place an order", { type: 'error' });
+      }
+    } catch {
+      addToast("Unable to verify login. Please try again.", { type: 'error' });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-brand-50 font-sans">
@@ -49,7 +65,7 @@ export default function CartPage() {
                 <span>Clear Cart</span>
               </button>
               <button 
-                onClick={() => router.push('/checkout')}
+                onClick={handleCheckout}
                 className="rounded-full border border-accent px-5 py-2 text-accent hover:bg-white/60 flex items-center gap-2"
               >
                 <CartIcon className="w-5 h-5" />

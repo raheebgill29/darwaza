@@ -9,7 +9,6 @@ import ProductCard from "@/components/ProductCard";
 import AddToCartButton from "@/components/AddToCartButton";
 import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 import SizeQuantityTable from "@/components/SizeQuantityTable";
-import AddSelectedSizesButton from "@/components/AddSelectedSizesButton";
 import AddToWishlistButton from "@/components/AddToWishlistButton";
 
 type Props = {
@@ -191,18 +190,6 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
               onLoaded={(rows) => setSizeCount(rows.length)}
               className="rounded-xl border border-brand-200 bg-white p-3"
             />
-            {/* Add selected per-size quantities */}
-            {sizeCount > 0 && (
-              <AddSelectedSizesButton
-                productId={product.slug}
-                title={title}
-                price={price}
-                image={image}
-                sizeQuantities={sizeQuantities}
-                label="Add Selected Sizes"
-                className="w-full rounded-full bg-brand-base px-5 py-3 text-accent hover:opacity-90"
-              />
-            )}
             {/* Quantity Selector */}
             {sizeCount <= 1 && (
             <div className="flex items-center">
@@ -242,7 +229,16 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
                 size={selectedSize ?? undefined}
                 className="rounded-full border-2 border-accent px-6 py-2 text-accent transition-all hover:bg-accent hover:text-white"
               />
-              <AddToCartButton id={product.slug} title={title} price={price} image={image} quantity={quantity} disabled={effectiveMax === 0} selectedSize={selectedSize ?? undefined} />
+              <AddToCartButton
+                id={product.slug}
+                title={title}
+                price={price}
+                image={image}
+                quantity={quantity}
+                disabled={effectiveMax === 0}
+                selectedSize={selectedSize ?? undefined}
+                sizeQuantities={sizeCount > 0 ? sizeQuantities : undefined}
+              />
               <Link href="/" className="rounded-full border-2 border-accent px-6 py-2 text-accent transition-all hover:bg-accent hover:text-white">
                 Back to Home
               </Link>

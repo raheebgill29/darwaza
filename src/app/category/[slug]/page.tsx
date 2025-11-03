@@ -13,6 +13,7 @@ import FilterSidebar from "@/components/FilterSidebar";
 import CategoryBreadcrumb from "@/components/CategoryBreadcrumb";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import NewsletterSubscribe from "@/components/NewsletterSubscribe";
+import LoadingMessage from "@/components/LoadingMessage";
 
 function formatPrice(num: number | string) {
   const n = typeof num === "string" ? parseFloat(num) : num;
@@ -30,11 +31,13 @@ export default function CategoryPage() {
   const [sortOption, setSortOption] = useState("featured");
   const [filters, setFilters] = useState<{ priceRange: string[] }>({ priceRange: [] });
   const [notFound, setNotFound] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchCategoryAndProducts() {
       if (!slug) return;
       setNotFound(false);
+      setLoading(true);
       // Derive category name from slug (reverse of slugify used in ShopByCategorySection)
       const nameQuery = slug.replace(/-/g, " ");
 
@@ -49,6 +52,7 @@ export default function CategoryPage() {
         setAllProducts([]);
         setFeaturedOnly([]);
         setFilteredProducts([]);
+        setLoading(false);
         return;
       }
 
@@ -72,6 +76,7 @@ export default function CategoryPage() {
         setAllProducts([]);
         setFeaturedOnly([]);
         setFilteredProducts([]);
+        setLoading(false);
         return;
       }
 
@@ -95,6 +100,7 @@ export default function CategoryPage() {
       setFeaturedOnly(mapped.filter((m) => m.badge === "FEATURED"));
       // Initialize filtered list to all mapped products
       setFilteredProducts(mapped);
+      setLoading(false);
     }
 
     fetchCategoryAndProducts();
@@ -129,13 +135,38 @@ export default function CategoryPage() {
     setFilteredProducts(sortedAndFiltered);
   }, [allProducts, sortOption, filters]);
 
-  if (notFound || !dbCategory) {
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-brand-50 font-sans">
+        <Navbar />
+        <main className="mx-auto max-w-6xl px-4 py-8 flex justify-center items-center">
+          <LoadingMessage message="Loading category..." />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (notFound) {
     return (
       <div className="min-h-screen bg-brand-50 font-sans">
         <Navbar />
         <main className="mx-auto max-w-6xl px-4 py-8">
           <h1 className="text-2xl font-semibold text-accent">Category Not Found</h1>
           <p className="mt-4 text-accent/80">The category you are looking for does not exist.</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Defensive: if dbCategory is still null for any reason, show loader
+  if (!dbCategory) {
+    return (
+      <div className="min-h-screen bg-brand-50 font-sans">
+        <Navbar />
+        <main className="mx-auto max-w-6xl px-4 py-8 flex justify-center items-center">
+          <LoadingMessage message="Loading category..." />
         </main>
         <Footer />
       </div>

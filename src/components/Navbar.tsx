@@ -7,6 +7,7 @@ import { useCart } from "@/lib/cartContext";
 import { useWishlist } from "@/lib/wishlistContext";
 import CartIcon from "./icons/CartIcon";
 import { scrollToSection } from "@/lib/scrollToSection";
+import MobileMenu from "@/components/MobileMenu";
 
 export default function Navbar() {
   const [displayName, setDisplayName] = useState<string | null>(null);
@@ -45,11 +46,17 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-brand-200">
       <div className="flex flex-col items-center justify-center py-4">
         <div className="flex w-full items-center justify-between px-4">
-          <div className="w-1/3">{/* Left spacer */}</div>
+          {/* Mobile: Hamburger on the left; Desktop: spacer */}
+          <div className="w-1/3 flex items-center justify-start">
+            <div className="md:hidden">
+              <MobileMenu displayName={displayName} isAdmin={isAdmin} cartCount={count} wishCount={wishCount} />
+            </div>
+          </div>
           <Link href="/" className="text-3xl font-serif font-bold text-accent">
             Darwaza
           </Link>
-          <div className="flex w-1/3 items-center justify-end gap-4">
+          {/* Desktop icons */}
+          <div className="hidden md:flex w-1/3 items-center justify-end gap-4">
             {/* <button aria-label="Search" className="text-accent hover:text-primary">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -87,8 +94,19 @@ export default function Navbar() {
               )}
             </Link>
           </div>
+          {/* Mobile: Cart icon on the right */}
+          <div className="flex md:hidden w-1/3 items-center justify-end">
+            <Link href="/cart" className="relative text-accent hover:text-primary" aria-label="Cart">
+              <CartIcon className="h-6 w-6" />
+              {count > 0 && (
+                <span className="absolute -top-2 -right-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">
+                  {count}
+                </span>
+              )}
+            </Link>
+          </div>
         </div>
-        <nav className="mt-4 flex items-center justify-center gap-6 text-sm font-medium">
+        <nav className="mt-4 hidden md:flex items-center justify-center gap-6 text-sm font-medium">
           <Link href="/" className="text-accent hover:text-primary">Home</Link>
           <button onClick={() => scrollToSection('shop-by-category')} className="text-accent hover:text-primary">Shop</button>
           <button onClick={() => scrollToSection('new-arrivals')} className="text-accent hover:text-primary">New Arrivals</button>
