@@ -23,6 +23,7 @@ export default function DbProductPage() {
   const [error, setError] = useState<string | null>(null);
   const [gallery, setGallery] = useState<string[]>([]);
   const [related, setRelated] = useState<Array<Product & { href?: string }>>([]);
+  const [stock, setStock] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -36,7 +37,7 @@ export default function DbProductPage() {
         // Fetch the base product (without non-existent columns)
         const { data: p, error: fetchError } = await supabase
           .from("products")
-          .select("id,name,price,description,featured,category_id,product_images(id,image_url,order_index)")
+          .select("id,name,price,description,featured,stock,category_id,product_images(id,image_url,order_index)")
           .eq("id", id)
           .single();
 
@@ -105,6 +106,7 @@ export default function DbProductPage() {
         };
 
         setProduct(mappedProduct);
+        setStock(p.stock ?? 0);
         // Fetch random related products after product loads
         await fetchRelatedRandom(id, categoryName);
         setLoading(false);
@@ -189,7 +191,7 @@ export default function DbProductPage() {
     <div className="min-h-screen bg-brand-50 font-sans">
       <Navbar />
       <main className="mx-auto max-w-6xl px-4 py-8">
-        <ProductDetail product={product} images={gallery} relatedProducts={related} />
+        <ProductDetail product={product} images={gallery} relatedProducts={related} maxStock={stock ?? undefined} />
       </main>
       <Footer />
     </div>

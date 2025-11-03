@@ -13,9 +13,10 @@ type Props = {
   product: Product;
   images?: string[]; // optional gallery of images
   relatedProducts?: Array<Product & { href?: string }>; // optional related items from DB
+  maxStock?: number; // optional stock limit to cap quantity selection
 };
 
-export default function ProductDetail({ product, images, relatedProducts }: Props) {
+export default function ProductDetail({ product, images, relatedProducts, maxStock }: Props) {
   const { title, price, image, description, details, category, badge } = product;
   // Use provided gallery from props; fall back to the single product image
   const gallery = (images && images.length > 0) ? images : [image];
@@ -26,6 +27,12 @@ export default function ProductDetail({ product, images, relatedProducts }: Prop
     setSelectedImage(gallery[0]);
   }, [image, images]);
   const [quantity, setQuantity] = useState(1);
+  const effectiveMax = Number.isFinite(maxStock as number) && typeof maxStock === 'number' ? Math.max(0, maxStock) : Number.POSITIVE_INFINITY;
+  // Clamp if max changes or is lower than current
+  useEffect(() => {
+    setQuantity((q) => Math.min(q, effectiveMax === Number.POSITIVE_INFINITY ? q : Math.max(0, effectiveMax) || 0) || (effectiveMax > 0 ? 1 : 0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveMax]);
   
   // Gallery thumbnails come from Supabase (via props) or the main product image
 
@@ -171,25 +178,30 @@ export default function ProductDetail({ product, images, relatedProducts }: Prop
               <span className="mr-4 text-accent font-medium">Quantity:</span>
               <div className="flex items-center border border-accent/20 rounded-lg">
                 <button 
-                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  onClick={() => setQuantity(q => Math.max(effectiveMax > 0 ? 1 : 0, q - 1))}
                   className="px-3 py-1 text-accent hover:bg-accent/10 transition-colors"
                   aria-label="Decrease quantity"
-                >
+                  >
                   <MinusIcon className="h-4 w-4" />
                 </button>
                 <span className="px-4 py-1 text-accent font-medium min-w-[40px] text-center">{quantity}</span>
                 <button 
-                  onClick={() => setQuantity(q => q + 1)}
-                  className="px-3 py-1 text-accent hover:bg-accent/10 transition-colors"
+                  onClick={() => setQuantity(q => Math.min(q + 1, effectiveMax === Number.POSITIVE_INFINITY ? q + 1 : effectiveMax))}
+                  className={`px-3 py-1 text-accent transition-colors ${quantity >= effectiveMax ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent/10'}`}
                   aria-label="Increase quantity"
+                  disabled={quantity >= effectiveMax}
                 >
                   <PlusIcon className="h-4 w-4" />
                 </button>
               </div>
             </div>
+            {/* Stock info */}
+            {effectiveMax !== Number.POSITIVE_INFINITY && (
+              <p className="text-sm text-accent/70">{effectiveMax > 0 ? `In stock: ${effectiveMax}` : 'Out of stock'}</p>
+            )}
             
             <div className="flex flex-wrap gap-4">
-              <AddToCartButton id={product.slug} title={title} price={price} image={image} quantity={quantity} />
+              <AddToCartButton id={product.slug} title={title} price={price} image={image} quantity={quantity} disabled={effectiveMax === 0} />
               <Link href="/" className="rounded-full border-2 border-accent px-6 py-2 text-accent transition-all hover:bg-accent hover:text-white">
                 Back to Home
               </Link>

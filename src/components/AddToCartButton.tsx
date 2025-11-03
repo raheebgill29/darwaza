@@ -18,14 +18,16 @@ type Props = {
   className?: string;
   label?: string; // default: "Add to Cart"
   quantity?: number; // default: 1
+  disabled?: boolean; // optional disabled state
 };
 
-export default function AddToCartButton({ id, title, price, image, className, label, quantity = 1 }: Props) {
+export default function AddToCartButton({ id, title, price, image, className, label, quantity = 1, disabled = false }: Props) {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
   const priceNum = useMemo(() => parsePrice(price), [price]);
 
   const onAdd = () => {
+    if (disabled || quantity <= 0) return;
     addItem({ id, title, price: priceNum, image: image ?? undefined }, quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
@@ -35,9 +37,10 @@ export default function AddToCartButton({ id, title, price, image, className, la
     <button
       type="button"
       onClick={onAdd}
+      disabled={disabled}
       className={
         className ??
-        "rounded-full bg-brand-base px-5 py-2 text-accent hover:opacity-90 flex items-center justify-center gap-2"
+        `rounded-full bg-brand-base px-5 py-2 text-accent flex items-center justify-center gap-2 ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`
       }
     >
       <CartIcon className="w-5 h-5" />
