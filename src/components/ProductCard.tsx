@@ -8,6 +8,7 @@ type ProductCardProps = {
   image?: string; // local or remote URL
   href?: string;
   id?: string;
+  showMeta?: boolean; // controls title/price block below image
 };
 
 export default function ProductCard({
@@ -16,6 +17,7 @@ export default function ProductCard({
   image = "/file.svg",
   href = "#",
   id,
+  showMeta = true,
 }: ProductCardProps) {
   const [src, setSrc] = useState(image);
   const resolvedId = useMemo(() => {
@@ -38,12 +40,14 @@ export default function ProductCard({
           onError={() => setSrc("https://picsum.photos/400/300")}
         />
       </div>
-      <div className="p-4">
-        <h3 className="text-sm tracking-tight group-hover:underline">{title}</h3>
-        <div className="flex items-center justify-between">
-          {price && <p className="text-sm font-bold">{price}</p>}
+      {showMeta && (
+        <div className="p-4">
+          <h3 className="text-sm tracking-tight group-hover:underline">{title}</h3>
+          <div className="flex items-center justify-between">
+            {price && <p className="text-sm font-bold">{price}</p>}
+          </div>
         </div>
-      </div>
+      )}
     </Link>
   );
 }

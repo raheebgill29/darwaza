@@ -82,13 +82,13 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
         {/* Product Images */}
         <div className="space-y-4">
-          <div className="relative overflow-hidden rounded-2xl bg-brand-base p-4 shadow-lg transition-all duration-300 hover:shadow-xl">
+          <div className="relative overflow-hidden rounded-2xl bg-brand-base p-2 md:p-4 shadow-lg transition-all duration-300 hover:shadow-xl">
             {badge && (
               <div className="absolute top-6 left-6 z-10 rounded-full bg-accent px-3 py-1 text-sm font-medium text-white">
                 {badge}
               </div>
             )}
-            <div className="relative h-[560px] md:h-[680px] w-full overflow-hidden rounded-xl">
+            <div className="relative h-[420px] md:h-[680px] w-full overflow-hidden rounded-xl">
               <Image
                 src={selectedImage}
                 alt={title}
@@ -106,7 +106,7 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
               <button
                 key={index}
                 onClick={() => setSelectedImage(img)}
-                className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
+                className={`relative h-24 w-24 md:h-20 md:w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
                   selectedImage === img ? "border-accent" : "border-transparent"
                 }`}
               >
@@ -114,7 +114,7 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
                   src={img}
                   alt={`${title} thumbnail ${index + 1}`}
                   fill
-                  sizes="80px"
+                  sizes="96px"
                   className="object-cover"
                 />
               </button>
@@ -253,6 +253,7 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
               price={p.price}
               image={p.image}
               href={p.href ?? `/db-products/${(p as any).slug || (p as any).id}`}
+              showMeta={false}
             />
           ))}
         </div>
