@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useCart } from "@/lib/cartContext";
+import { useWishlist } from "@/lib/wishlistContext";
 import CartIcon from "./icons/CartIcon";
 import { scrollToSection } from "@/lib/scrollToSection";
 
@@ -11,6 +12,7 @@ export default function Navbar() {
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const { count } = useCart();
+  const { count: wishCount } = useWishlist();
 
   useEffect(() => {
     let mounted = true;
@@ -48,11 +50,11 @@ export default function Navbar() {
             Darwaza
           </Link>
           <div className="flex w-1/3 items-center justify-end gap-4">
-            <button aria-label="Search" className="text-accent hover:text-primary">
+            {/* <button aria-label="Search" className="text-accent hover:text-primary">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
               </svg>
-            </button>
+            </button> */}
             {displayName ? (
               <Link href={isAdmin ? "/admin-dashboard" : "/user-dashboard"} className="text-accent hover:text-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
@@ -66,11 +68,16 @@ export default function Navbar() {
                 </svg>
               </Link>
             )}
-            <button aria-label="Wishlist" className="text-accent hover:text-primary">
+            <Link href="/wishlist" className="relative text-accent hover:text-primary">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.815 3 8.25c0 7.219 2.912 11.38 7.518 14.025 1.412.606 2.762.606 4.174 0C18.088 19.63 21 15.469 21 8.25z" />
               </svg>
-            </button>
+              {wishCount > 0 && (
+                <span className="absolute -top-2 -right-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">
+                  {wishCount}
+                </span>
+              )}
+            </Link>
             <Link href="/cart" className="relative text-accent hover:text-primary">
               <CartIcon className="h-6 w-6" />
               {count > 0 && (

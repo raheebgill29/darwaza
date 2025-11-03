@@ -10,6 +10,7 @@ import AddToCartButton from "@/components/AddToCartButton";
 import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 import SizeQuantityTable from "@/components/SizeQuantityTable";
 import AddSelectedSizesButton from "@/components/AddSelectedSizesButton";
+import AddToWishlistButton from "@/components/AddToWishlistButton";
 
 type Props = {
   product: Product;
@@ -231,7 +232,16 @@ export default function ProductDetail({ product, images, relatedProducts, maxSto
               <p className="text-sm text-accent/70">{effectiveMax > 0 ? `In stock: ${effectiveMax}` : 'Out of stock'}</p>
             )}
             
-            <div className="flex flex-wrap gap-4">
+  <div className="flex flex-wrap gap-4">
+              {/* Wishlist button on the left of Add to Cart */}
+              <AddToWishlistButton
+                id={product.slug}
+                title={title}
+                price={price}
+                image={image}
+                size={selectedSize ?? undefined}
+                className="rounded-full border-2 border-accent px-6 py-2 text-accent transition-all hover:bg-accent hover:text-white"
+              />
               <AddToCartButton id={product.slug} title={title} price={price} image={image} quantity={quantity} disabled={effectiveMax === 0} selectedSize={selectedSize ?? undefined} />
               <Link href="/" className="rounded-full border-2 border-accent px-6 py-2 text-accent transition-all hover:bg-accent hover:text-white">
                 Back to Home

@@ -54,11 +54,11 @@ function OrderSuccessContent() {
       ) : orderDetails ? (
         <div className="mt-6 text-left">
           <OrderDetailsCard order={orderDetails} />
-          <div className="mt-6 rounded-md bg-brand-base p-4">
+          {/* <div className="mt-6 rounded-md bg-brand-base p-4">
             <p className="text-accent">
               We've received your order and will contact you soon to confirm delivery details.
             </p>
-          </div>
+          </div> */}
         </div>
       ) : (
         <p className="mt-4 text-accent/80">
