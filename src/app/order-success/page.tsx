@@ -5,11 +5,13 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabaseClient";
+import OrderDetailsCard from "@/components/OrderDetailsCard";
+import type { OrderRow } from "@/components/UserOrdersList";
 
 function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("id");
-  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [orderDetails, setOrderDetails] = useState<OrderRow | null>(null);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
@@ -29,7 +31,7 @@ function OrderSuccessContent() {
         .single();
 
       if (error) throw error;
-      setOrderDetails(data);
+      setOrderDetails(data as OrderRow);
     } catch (error) {
       console.error("Error fetching order:", error);
     } finally {
@@ -51,18 +53,8 @@ function OrderSuccessContent() {
         <p className="mt-4 text-accent/80">Loading order details...</p>
       ) : orderDetails ? (
         <div className="mt-6 text-left">
-          <p className="text-accent/80">Order ID: <span className="font-medium text-accent">{orderDetails.id}</span></p>
-          <p className="mt-1 text-accent/80">Date: <span className="font-medium text-accent">
-            {new Date(orderDetails.created_at).toLocaleDateString()}
-          </span></p>
-          <p className="mt-1 text-accent/80">Total: <span className="font-medium text-accent">
-            Rs {orderDetails.total_amount.toLocaleString("en-IN")}
-          </span></p>
-          <p className="mt-1 text-accent/80">Payment Method: <span className="font-medium text-accent">
-            {orderDetails.payment_method}
-          </span></p>
-          
-          <div className="mt-4 rounded-md bg-brand-base p-4">
+          <OrderDetailsCard order={orderDetails} />
+          <div className="mt-6 rounded-md bg-brand-base p-4">
             <p className="text-accent">
               We've received your order and will contact you soon to confirm delivery details.
             </p>

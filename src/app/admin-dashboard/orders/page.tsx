@@ -139,7 +139,7 @@ export default function AdminOrdersPage() {
                         {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                       </span>
                     </td>
-                    <td className="p-3 text-sm">
+                  <td className="p-3 text-sm">
                       <div className="flex items-center gap-2">
                         <select
                           value={order.status}
@@ -152,6 +152,12 @@ export default function AdminOrdersPage() {
                           <option value="delivered">Delivered</option>
                           <option value="cancelled">Cancelled</option>
                         </select>
+                        <a
+                          href={`/admin-dashboard/orders/${order.id}`}
+                          className="rounded-md border border-brand-200 px-2 py-1 text-xs text-accent hover:bg-brand-base"
+                        >
+                          View
+                        </a>
                       </div>
                     </td>
                   </tr>
