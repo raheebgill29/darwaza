@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Product } from "@/data/products";
 
 type ProductGridProps = {
-  products: Product[];
+  products: Array<Product & { href?: string }>;
 };
 
 export default function ProductGrid({ products }: ProductGridProps) {
@@ -39,7 +39,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
             whileHover={{ y: -5 }}
             className="group"
           >
-            <Link href={`/products/${product.slug}`}>
+            <Link href={product.href ?? `/products/${product.slug}`}>
               <div
                 className="relative overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg"
                 onMouseEnter={() => setHoveredProduct(product.slug)}

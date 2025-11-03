@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Product } from "@/data/products";
 
 type FeaturedProductsProps = {
-  products: Product[];
+  products: Array<Product & { href?: string }>;
 };
 
 export default function FeaturedProducts({ products }: FeaturedProductsProps) {
@@ -35,7 +35,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
           >
-            <Link href={`/products/${product.slug}`} className="group block">
+            <Link href={product.href ?? `/products/${product.slug}`} className="group block">
               <div className="relative overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg">
                 {/* Product Image */}
                 <div className="relative aspect-[4/3] overflow-hidden">
