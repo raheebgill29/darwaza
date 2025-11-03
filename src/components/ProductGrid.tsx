@@ -39,7 +39,11 @@ export default function ProductGrid({ products }: ProductGridProps) {
             whileHover={{ y: -5 }}
             className="group"
           >
-            <Link href={product.href ?? `/products/${product.slug}`}>
+            <Link
+              href={product.href ?? `/products/${product.slug}`}
+              aria-label={`View details for ${product.title}`}
+              className="block"
+            >
               <div
                 className="relative overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg"
                 onMouseEnter={() => setHoveredProduct(product.slug)}
@@ -70,7 +74,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
                   >
                     <p className="text-center text-lg font-semibold">{product.title}</p>
                     <p className="mt-1 text-center">{product.price}</p>
-                    <span className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-medium text-accent transition-colors">
+                    <span className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-medium text-accent transition-colors ring-1 ring-accent cursor-pointer hover:bg-accent hover:text-white">
                       View Details
                     </span>
                   </div>

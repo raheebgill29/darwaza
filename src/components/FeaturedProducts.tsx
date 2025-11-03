@@ -35,7 +35,11 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
           >
-            <Link href={product.href ?? `/products/${product.slug}`} className="group block">
+            <Link
+              href={product.href ?? `/products/${product.slug}`}
+              className="group block"
+              aria-label={`View details for ${product.title}`}
+            >
               <div className="relative overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-lg">
                 {/* Product Image */}
                 <div className="relative aspect-[4/3] overflow-hidden">
@@ -63,7 +67,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
                     {product.description}
                   </p>
                   <div className="mt-4 flex justify-between">
-                    <span className="text-sm font-medium text-accent">View Details</span>
+                    <span className="text-sm font-medium text-accent rounded-full bg-white px-4 py-2 ring-1 ring-accent cursor-pointer transition-colors hover:bg-accent hover:text-white">View Details</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5 text-accent transition-transform group-hover:translate-x-1"

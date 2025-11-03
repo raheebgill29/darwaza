@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/data/products";
@@ -9,19 +9,22 @@ import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   product: Product;
+  images?: string[]; // optional gallery of images
 };
 
-export default function ProductDetail({ product }: Props) {
+export default function ProductDetail({ product, images }: Props) {
   const { title, price, image, description, details, category, badge } = product;
-  const [selectedImage, setSelectedImage] = useState(image);
+  // Use provided gallery from props; fall back to the single product image
+  const gallery = (images && images.length > 0) ? images : [image];
+  const [selectedImage, setSelectedImage] = useState(gallery[0]);
+
+  // Keep selectedImage in sync if gallery updates (e.g., after async fetch)
+  useEffect(() => {
+    setSelectedImage(gallery[0]);
+  }, [image, images]);
   const [quantity, setQuantity] = useState(1);
   
-  // For demo purposes - additional images
-  const additionalImages = [
-    image,
-    "https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=1000",
-    "https://images.unsplash.com/photo-1560343090-f0409e92791a?q=80&w=1000",
-  ];
+  // Gallery thumbnails come from Supabase (via props) or the main product image
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-12">
@@ -75,7 +78,7 @@ export default function ProductDetail({ product }: Props) {
           
           {/* Thumbnail Gallery */}
           <div className="flex gap-3 overflow-x-auto pb-2">
-            {additionalImages.map((img, index) => (
+            {gallery.map((img, index) => (
               <button
                 key={index}
                 onClick={() => setSelectedImage(img)}
