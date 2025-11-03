@@ -4,15 +4,18 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/data/products";
+import { products as dataProducts } from "@/data/products";
+import ProductCard from "@/components/ProductCard";
 import AddToCartButton from "@/components/AddToCartButton";
 import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   product: Product;
   images?: string[]; // optional gallery of images
+  relatedProducts?: Array<Product & { href?: string }>; // optional related items from DB
 };
 
-export default function ProductDetail({ product, images }: Props) {
+export default function ProductDetail({ product, images, relatedProducts }: Props) {
   const { title, price, image, description, details, category, badge } = product;
   // Use provided gallery from props; fall back to the single product image
   const gallery = (images && images.length > 0) ? images : [image];
@@ -25,6 +28,15 @@ export default function ProductDetail({ product, images }: Props) {
   const [quantity, setQuantity] = useState(1);
   
   // Gallery thumbnails come from Supabase (via props) or the main product image
+
+  // Prepare related products: use provided ones, otherwise pick 4 random from local data
+  const related = (relatedProducts && relatedProducts.length > 0)
+    ? relatedProducts
+    : dataProducts
+        .filter((p) => p.slug !== product.slug)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 4)
+        .map((p) => ({ ...p, href: `/products/${p.slug}` }));
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-12">
@@ -186,20 +198,19 @@ export default function ProductDetail({ product, images }: Props) {
         </div>
       </div>
       
-      {/* Related Products Section (Placeholder) */}
+      {/* Related Products Section */}
       <div className="mt-16 border-t border-accent/10 pt-12">
         <h2 className="mb-6 text-center text-2xl font-bold text-accent">You May Also Like</h2>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="rounded-xl bg-brand-base p-3 shadow-sm transition-all hover:shadow-md">
-              <div className="relative h-40 w-full overflow-hidden rounded-lg">
-                <div className="absolute inset-0 bg-accent/5 animate-pulse"></div>
-              </div>
-              <div className="mt-2">
-                <div className="h-4 w-3/4 rounded bg-accent/5 animate-pulse"></div>
-                <div className="mt-1 h-3 w-1/2 rounded bg-accent/5 animate-pulse"></div>
-              </div>
-            </div>
+          {related.map((p) => (
+            <ProductCard
+              key={(p as any).slug || (p as any).id || p.title}
+              id={(p as any).slug || (p as any).id}
+              title={p.title}
+              price={p.price}
+              image={p.image}
+              href={p.href ?? `/db-products/${(p as any).slug || (p as any).id}`}
+            />
           ))}
         </div>
       </div>

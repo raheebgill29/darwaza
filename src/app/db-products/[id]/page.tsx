@@ -22,6 +22,7 @@ export default function DbProductPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [gallery, setGallery] = useState<string[]>([]);
+  const [related, setRelated] = useState<Array<Product & { href?: string }>>([]);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -104,6 +105,8 @@ export default function DbProductPage() {
         };
 
         setProduct(mappedProduct);
+        // Fetch random related products after product loads
+        await fetchRelatedRandom(id, categoryName);
         setLoading(false);
       } catch (err) {
         console.error("Error in product fetch:", err);
@@ -114,6 +117,45 @@ export default function DbProductPage() {
 
     fetchProduct();
   }, [id]);
+
+  async function fetchRelatedRandom(currentId: string, currentCategoryName?: string) {
+    try {
+      // Fetch a sample of products across all categories, exclude the current one
+      const { data: prods, error: prodErr } = await supabase
+        .from("products")
+        .select("id,name,price,product_images(image_url,order_index)")
+        .neq("id", currentId)
+        .order("created_at", { ascending: false })
+        .limit(24);
+
+      if (prodErr || !prods) return;
+
+      const items = (prods as any[]).map((p) => {
+        const images = (p.product_images ?? []).sort(
+          (a: any, b: any) => (a.order_index ?? 0) - (b.order_index ?? 0)
+        );
+        const image = images[0]?.image_url || "https://via.placeholder.com/600x600";
+        const mapped: Product & { href?: string } = {
+          slug: p.id,
+          title: p.name,
+          category: (currentCategoryName || "Accessories") as any,
+          price: formatPrice(p.price),
+          image,
+          description: "",
+          details: undefined,
+          badge: undefined,
+          href: `/db-products/${p.id}`,
+        };
+        return mapped;
+      });
+
+      // Shuffle and take 4
+      const shuffled = items.sort(() => Math.random() - 0.5).slice(0, 4);
+      setRelated(shuffled);
+    } catch (err) {
+      console.error("Error fetching related products:", err);
+    }
+  }
 
   if (loading) {
     return (
@@ -147,7 +189,7 @@ export default function DbProductPage() {
     <div className="min-h-screen bg-brand-50 font-sans">
       <Navbar />
       <main className="mx-auto max-w-6xl px-4 py-8">
-        <ProductDetail product={product} images={gallery} />
+        <ProductDetail product={product} images={gallery} relatedProducts={related} />
       </main>
       <Footer />
     </div>
