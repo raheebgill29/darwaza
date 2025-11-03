@@ -55,10 +55,10 @@ const ProductGridSection: React.FC = async () => {
   const products = await fetchTopRated(8);
   return (
     <section className="py-10 px-4 max-w-7xl mx-auto">
-      <div className="flex justify-center items-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mr-2">Top Rated</h2>
-        <span className="text-2xl text-gray-400">/</span>
-        <h2 className="text-2xl font-bold text-gray-400 ml-2">Best Sellers</h2>
+      <div className="flex justify-center items-center gap-4 mb-8">
+        <h2 className="text-3xl font-semibold text-accent">Top Rated</h2>
+        <span className="text-2xl text-accent">/</span>
+        <h2 className="text-3xl font-semibold text-accent">Best Sellers</h2>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
