@@ -147,9 +147,9 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
   }
 
   return (
-    <div className="min-h-screen bg-brand-50 font-sans">
+    <div className="min-h-screen bg-brand-50 font-sans flex flex-col">
       <Navbar />
-      <main className="mx-auto max-w-6xl px-4 py-10">
+      <main className="flex-1 mx-auto max-w-6xl px-4 py-10">
         <div className="mb-8">
           <Link 
             href="/admin-dashboard/view-products" 

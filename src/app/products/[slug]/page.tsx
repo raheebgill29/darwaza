@@ -23,9 +23,9 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
   if (!product) return notFound();
 
   return (
-    <div className="min-h-screen bg-brand-50 font-sans">
+    <div className="min-h-screen bg-brand-50 font-sans flex flex-col">
       <Navbar />
-      <main>
+      <main className="flex-1">
         <ProductDetail product={product} />
       </main>
       <Footer />

@@ -70,9 +70,9 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-50 font-sans">
+    <div className="min-h-screen bg-brand-50 font-sans flex flex-col">
       <Navbar />
-      <main className="mx-auto max-w-6xl px-4 py-10">
+      <main className="flex-1 mx-auto max-w-6xl px-4 py-10">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-accent">Orders</h1>
           <div className="flex items-center gap-2">

@@ -15,9 +15,9 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-50 font-sans">
+    <div className="min-h-screen bg-brand-50 font-sans flex flex-col">
       <Navbar />
-      <main className="mx-auto max-w-6xl px-4 py-10">
+      <main className="flex-1 mx-auto max-w-6xl px-4 py-10">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-semibold text-accent">Admin Dashboard</h1>

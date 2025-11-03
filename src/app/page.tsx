@@ -10,9 +10,9 @@ import Navbar from "@/components/Navbar";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-brand-50 font-sans">
+    <div className="min-h-screen bg-brand-50 font-sans flex flex-col">
       <Navbar />
-      <main>
+      <main className="flex-1">
         <Banner />
         <div id="shop-by-category">
           <ShopByCategorySection />

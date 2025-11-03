@@ -63,9 +63,9 @@ export default function UserDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-50 font-sans">
+    <div className="min-h-screen bg-brand-50 font-sans flex flex-col">
       <Navbar />
-      <main className="mx-auto max-w-6xl px-4 py-8">
+      <main className="flex-1 mx-auto max-w-6xl px-4 py-8">
         <h1 className="mb-6 text-2xl font-semibold text-accent">User Dashboard</h1>
         {loading ? (
           <div className="text-accent/80">Loading profile...</div>

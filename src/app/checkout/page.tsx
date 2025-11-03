@@ -88,9 +88,9 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-50 font-sans">
+    <div className="min-h-screen bg-brand-50 font-sans flex flex-col">
       <Navbar />
-      <main className="mx-auto max-w-6xl px-4 py-8">
+      <main className="flex-1 mx-auto max-w-6xl px-4 py-8">
         <h1 className="text-2xl font-semibold text-accent">Checkout</h1>
         
         <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-2">
