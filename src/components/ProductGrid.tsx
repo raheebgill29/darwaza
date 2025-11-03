@@ -24,9 +24,9 @@ export default function ProductGrid({ products }: ProductGridProps) {
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-accent">
+        {/* <h2 className="text-xl font-semibold text-accent">
           {products.length} {products.length === 1 ? "Product" : "Products"}
-        </h2>
+        </h2> */}
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
