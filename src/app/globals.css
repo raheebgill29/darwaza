@@ -56,3 +56,25 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Nice scrollbars for modal and textareas */
+.nice-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand-400) transparent;
+}
+.nice-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.nice-scrollbar::-webkit-scrollbar-track {
+  background: rgba(251, 209, 218, 0.35); /* brand-200 */
+  border-radius: 9999px;
+}
+.nice-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--brand-400);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+}
+.nice-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--brand-500);
+}

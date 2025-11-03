@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
 import { use } from 'react'
+import EditProductModal from '@/components/admin/EditProductModal'
 
 interface Product {
   id: string
@@ -32,6 +33,8 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<{ name: string; price: string; description: string }>({ name: '', price: '', description: '' })
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [editModalProductId, setEditModalProductId] = useState<string | null>(null)
   
   // Properly unwrap the params Promise using React.use()
   const { categoryId } = use(params)
@@ -106,8 +109,8 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
   }
 
   function startEdit(p: Product) {
-    setEditingId(p.id)
-    setEditForm({ name: p.name, price: String(p.price), description: p.description ?? '' })
+    setEditModalProductId(p.id)
+    setEditModalOpen(true)
   }
 
   function cancelEdit() {
@@ -292,6 +295,30 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
                 ))}
               </tbody>
             </table>
+            <EditProductModal
+              open={editModalOpen}
+              productId={editModalProductId || ''}
+              onClose={() => { setEditModalOpen(false); setEditModalProductId(null) }}
+              onSaved={async (updated) => {
+                try {
+                  const { data, error } = await supabase
+                    .from('products')
+                    .select('id,name,price,description,category_id,featured,new_arrival,top_rated,product_images (image_url)')
+                    .eq('id', updated.id)
+                    .single()
+                  if (!error && data) {
+                    setProducts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...data } : p)))
+                  } else {
+                    setProducts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)))
+                  }
+                } catch {
+                  setProducts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)))
+                } finally {
+                  setEditModalOpen(false)
+                  setEditModalProductId(null)
+                }
+              }}
+            />
           </div>
         )}
       </main>
