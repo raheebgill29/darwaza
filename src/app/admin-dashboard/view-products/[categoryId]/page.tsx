@@ -14,6 +14,9 @@ interface Product {
   description: string
   category_id: string
   product_images?: { image_url: string }[]
+  featured?: boolean
+  new_arrival?: boolean
+  top_rated?: boolean
 }
 
 interface Category {
@@ -26,6 +29,9 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
   const [category, setCategory] = useState<Category | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editForm, setEditForm] = useState<{ name: string; price: string; description: string }>({ name: '', price: '', description: '' })
   
   // Properly unwrap the params Promise using React.use()
   const { categoryId } = use(params)
@@ -57,6 +63,9 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
             price, 
             description, 
             category_id,
+            featured,
+            new_arrival,
+            top_rated,
             product_images (image_url)
           `)
           .eq('category_id', categoryId)
@@ -82,6 +91,57 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
       setError('No category ID provided')
     }
   }, [categoryId]) // Only depend on the extracted categoryId
+
+  async function handleToggle(id: string, field: 'featured' | 'new_arrival' | 'top_rated', value: boolean) {
+    try {
+      const { error: upErr } = await supabase
+        .from('products')
+        .update({ [field]: value })
+        .eq('id', id)
+      if (upErr) throw upErr
+      setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, [field]: value } : p)))
+    } catch (err: any) {
+      setError(err.message)
+    }
+  }
+
+  function startEdit(p: Product) {
+    setEditingId(p.id)
+    setEditForm({ name: p.name, price: String(p.price), description: p.description ?? '' })
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+  }
+
+  async function saveEdit(id: string) {
+    try {
+      const priceNum = parseFloat(editForm.price)
+      if (Number.isNaN(priceNum)) throw new Error('Invalid price')
+      const { error: upErr } = await supabase
+        .from('products')
+        .update({ name: editForm.name.trim(), price: priceNum, description: editForm.description.trim() })
+        .eq('id', id)
+      if (upErr) throw upErr
+      setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, name: editForm.name.trim(), price: priceNum, description: editForm.description.trim() } : p)))
+      setEditingId(null)
+    } catch (err: any) {
+      setError(err.message)
+    }
+  }
+
+  async function deleteProduct(id: string) {
+    const ok = typeof window !== 'undefined' ? window.confirm('Delete this product? This cannot be undone.') : true
+    if (!ok) return
+    try {
+      const { error: delErr } = await supabase.from('products').delete().eq('id', id)
+      if (delErr) throw delErr
+      setProducts((prev) => prev.filter((p) => p.id !== id))
+      if (expandedId === id) setExpandedId(null)
+    } catch (err: any) {
+      setError(err.message)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-brand-50 font-sans">
@@ -128,36 +188,107 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {products.map((product) => (
-                  <tr key={product.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="w-16 h-16 relative">
-                        <img 
-                          src={product.product_images?.[0]?.image_url || 'https://via.placeholder.com/150'} 
-                          alt={product.name}
-                          className="w-full h-full object-cover rounded"
-                        />
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">Rs {product.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 max-w-xs truncate">{product.description}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <Link 
-                        href={`/products/${product.id}`}
-                        className="text-indigo-600 hover:text-indigo-900 mr-4"
-                        target="_blank"
-                      >
-                        View
-                      </Link>
-                      {/* Add edit functionality in the future */}
-                    </td>
-                  </tr>
+                  <>
+                    <tr key={product.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="w-16 h-16 relative">
+                          <img 
+                            src={product.product_images?.[0]?.image_url || 'https://via.placeholder.com/150'} 
+                            alt={product.name}
+                            className="w-full h-full object-cover rounded"
+                          />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">Rs {product.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-900 max-w-xs truncate">{product.description}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          className="text-indigo-600 hover:text-indigo-900 mr-4"
+                          onClick={() => setExpandedId(expandedId === product.id ? null : product.id)}
+                        >
+                          {expandedId === product.id ? 'Hide' : 'View'}
+                        </button>
+                        <button
+                          className="text-green-600 hover:text-green-800 mr-4"
+                          onClick={() => startEdit(product)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-red-600 hover:text-red-800"
+                          onClick={() => deleteProduct(product.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                    {expandedId === product.id && (
+                      <tr>
+                        <td colSpan={5} className="bg-brand-base/50 px-6 py-4">
+                          <div className="flex flex-wrap items-center gap-6">
+                            <label className="flex items-center gap-2 text-sm text-accent">
+                              <input
+                                type="checkbox"
+                                checked={!!product.featured}
+                                onChange={(e) => handleToggle(product.id, 'featured', e.target.checked)}
+                              />
+                              Featured
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-accent">
+                              <input
+                                type="checkbox"
+                                checked={!!product.new_arrival}
+                                onChange={(e) => handleToggle(product.id, 'new_arrival', e.target.checked)}
+                              />
+                              New Arrival
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-accent">
+                              <input
+                                type="checkbox"
+                                checked={!!product.top_rated}
+                                onChange={(e) => handleToggle(product.id, 'top_rated', e.target.checked)}
+                              />
+                              Top Rated
+                            </label>
+
+                            {editingId === product.id ? (
+                              <div className="w-full mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <input
+                                  className="rounded border border-brand-200 p-2"
+                                  value={editForm.name}
+                                  onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                                  placeholder="Name"
+                                />
+                                <input
+                                  className="rounded border border-brand-200 p-2"
+                                  value={editForm.price}
+                                  onChange={(e) => setEditForm((f) => ({ ...f, price: e.target.value }))}
+                                  placeholder="Price"
+                                />
+                                <input
+                                  className="rounded border border-brand-200 p-2"
+                                  value={editForm.description}
+                                  onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
+                                  placeholder="Description"
+                                />
+                                <div className="md:col-span-3 flex gap-3">
+                                  <button className="px-4 py-2 bg-green-600 text-white rounded" onClick={() => saveEdit(product.id)}>Save</button>
+                                  <button className="px-4 py-2 bg-gray-300 text-accent rounded" onClick={cancelEdit}>Cancel</button>
+                                </div>
+                              </div>
+                            ) : null}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
                 ))}
               </tbody>
             </table>
