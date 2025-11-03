@@ -48,9 +48,9 @@ export default function Navbar() {
         <div className="flex w-full items-center justify-between px-4">
           {/* Mobile: Hamburger on the left; Desktop: spacer */}
           <div className="w-1/3 flex items-center justify-start">
-            <div className="md:hidden">
-              <MobileMenu displayName={displayName} isAdmin={isAdmin} cartCount={count} wishCount={wishCount} />
-            </div>
+        <div className="md:hidden">
+          <MobileMenu displayName={displayName} isAdmin={isAdmin} wishCount={wishCount} />
+        </div>
           </div>
           <Link href="/" className="text-3xl font-serif font-bold text-accent">
             Darwaza

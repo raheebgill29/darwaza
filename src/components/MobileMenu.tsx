@@ -2,16 +2,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import CartIcon from "@/components/icons/CartIcon";
 
 type Props = {
   displayName: string | null;
   isAdmin: boolean;
-  cartCount: number;
   wishCount: number;
 };
 
-export default function MobileMenu({ displayName, isAdmin, cartCount, wishCount }: Props) {
+export default function MobileMenu({ displayName, isAdmin, wishCount }: Props) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -78,16 +76,6 @@ export default function MobileMenu({ displayName, isAdmin, cartCount, wishCount 
                 </span>
                 {wishCount > 0 && (
                   <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">{wishCount}</span>
-                )}
-              </Link>
-
-              <Link href="/cart" className="mt-1 flex items-center justify-between rounded-md px-3 py-3 text-accent hover:bg-brand-base">
-                <span className="inline-flex items-center gap-2">
-                  <CartIcon className="h-5 w-5" />
-                  Cart
-                </span>
-                {cartCount > 0 && (
-                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">{cartCount}</span>
                 )}
               </Link>
             </nav>
