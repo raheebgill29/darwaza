@@ -37,16 +37,23 @@ export default function Navbar() {
   }, []);
 
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const navbarHeight = 120; // Approximate height of the navbar
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition - navbarHeight;
-      
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+    // Check if we're on the home page
+    if (window.location.pathname === '/') {
+      // We're on the home page, scroll to the section
+      const element = document.getElementById(id);
+      if (element) {
+        const navbarHeight = 120; // Approximate height of the navbar
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - navbarHeight;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    } else {
+      // We're not on the home page, navigate to home page with hash
+      window.location.href = `/#${id}`;
     }
   };
 
