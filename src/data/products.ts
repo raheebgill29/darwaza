@@ -15,7 +15,7 @@ export const products: Product[] = [
     slug: "rose-midi-dress",
     title: "Brown Dress",
     category: "Clothes",
-    price: "$90.00",
+    price: "Rs 90.00",
     image:
       "https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY",
     description:
@@ -31,7 +31,7 @@ export const products: Product[] = [
     slug: "soft-knit-top",
     title: "Brigette Longsleeve",
     category: "Clothes",
-    price: "120.00$",
+    price: "Rs 120.00",
     image:
       "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg",
     description:
@@ -41,7 +41,7 @@ export const products: Product[] = [
       Fit: "Regular",
       Care: "Machine wash cold",
       Color: "Multiple colors available",
-      "Original Price": "100.00$"
+      "Original Price": "Rs 100.00"
     },
     badge: "-33%",
   },
@@ -65,7 +65,7 @@ export const products: Product[] = [
     slug: "classic-blazer",
     title: "Relay Track Pants",
     category: "Clothes",
-    price: "250.00$",
+    price: "Rs 250.00",
     image:
       "https://images.pexels.com/photos/904350/pexels-photo-904350.jpeg",
     description:
@@ -83,7 +83,7 @@ export const products: Product[] = [
     slug: "everyday-tote",
     title: "Idolize Tote Bag",
     category: "Accessories",
-    price: "116.00$",
+    price: "Rs 116.00",
     image:
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1974",
     description:
@@ -93,7 +93,7 @@ export const products: Product[] = [
       Size: "42cm x 35cm",
       Care: "Wipe clean",
       Color: "Beige",
-      "Original Price": "200.00$"
+      "Original Price": "Rs 200.00"
     },
     badge: "NEW",
   },
@@ -101,7 +101,7 @@ export const products: Product[] = [
     slug: "silk-scarf",
     title: "Rectangular Sunglasses",
     category: "Accessories",
-    price: "110.00$",
+    price: "Rs 110.00",
     image:
       "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg",
     description:
@@ -111,7 +111,7 @@ export const products: Product[] = [
       Size: "Standard",
       Care: "Clean with microfiber cloth",
       Color: "Black",
-      "Original Price": "120.00$"
+      "Original Price": "Rs 120.00"
     },
     badge: "NEW",
   },
@@ -153,7 +153,7 @@ export const products: Product[] = [
     slug: "petal-studs",
     title: "Gold Hoops",
     category: "Jewelry",
-    price: "$60.00",
+    price: "Rs 60.00",
     image:
       "https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY",
     description:
@@ -169,7 +169,7 @@ export const products: Product[] = [
     slug: "rose-pendant",
     title: "Polarised Sunglasses",
     category: "Accessories",
-    price: "200.00$",
+    price: "Rs 200.00",
     image:
       "https://fastly.picsum.photos/id/628/2509/1673.jpg?hmac=TUdtbj7l4rQx5WGHuFiV_9ArjkAkt6w2Zx8zz-aFwwY",
     description:

@@ -49,6 +49,14 @@ export default function AdminDashboardPage() {
           </Link>
 
           <Link
+            href="/admin-dashboard/view-products"
+            className="rounded-xl border border-brand-200 bg-brand-base px-4 py-6 hover:opacity-90"
+          >
+            <h2 className="text-xl font-semibold text-accent">View Products</h2>
+            <p className="text-accent/70">Browse products by category.</p>
+          </Link>
+
+          <Link
             href="/admin-dashboard/orders"
             className="rounded-xl border border-brand-200 bg-brand-base px-4 py-6 hover:opacity-90"
           >
