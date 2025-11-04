@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { use } from 'react'
 import EditProductModal from '@/components/admin/EditProductModal'
 import DataTable, { DataTableColumn } from '@/components/admin/DataTable'
+import SaveBar from '@/components/admin/SaveBar'
+import { useRouter } from 'next/navigation'
 
 interface Product {
   id: string
@@ -34,6 +36,10 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
   const [editForm, setEditForm] = useState<{ name: string; price: string; description: string }>({ name: '', price: '', description: '' })
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [editModalProductId, setEditModalProductId] = useState<string | null>(null)
+  const [hasUnsaved, setHasUnsaved] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [pendingChanges, setPendingChanges] = useState<Record<string, Partial<Record<'featured' | 'new_arrival' | 'top_rated', boolean>>>>({})
+  const router = useRouter()
   
   // Properly unwrap the params Promise using React.use()
   const { categoryId } = use(params)
@@ -94,16 +100,34 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
     }
   }, [categoryId]) // Only depend on the extracted categoryId
 
-  async function handleToggle(id: string, field: 'featured' | 'new_arrival' | 'top_rated', value: boolean) {
+  function handleToggle(id: string, field: 'featured' | 'new_arrival' | 'top_rated', value: boolean) {
+    // Update local table state immediately and mark changes for saving
+    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, [field]: value } : p)))
+    setPendingChanges((prev) => {
+      const next = { ...prev }
+      next[id] = { ...(next[id] || {}), [field]: value }
+      return next
+    })
+    setHasUnsaved(true)
+  }
+
+  async function saveAllChanges() {
     try {
-      const { error: upErr } = await supabase
-        .from('products')
-        .update({ [field]: value })
-        .eq('id', id)
-      if (upErr) throw upErr
-      setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, [field]: value } : p)))
+      if (!hasUnsaved || saving) return
+      setSaving(true)
+      const updates = Object.entries(pendingChanges).map(([id, changes]) => ({ id, ...changes }))
+      if (updates.length > 0) {
+        await Promise.all(
+          updates.map((u) => supabase.from('products').update(u).eq('id', u.id))
+        )
+      }
+      setPendingChanges({})
+      setHasUnsaved(false)
+      router.push('/admin-dashboard/view-products')
     } catch (err: any) {
       setError(err.message)
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -167,17 +191,20 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
             <p>Error: {error}</p>
           </div>
         ) : (
-          <DataTable
-            rows={products}
-            columns={productColumns({
-              onToggle: handleToggle,
-            })}
-            actions={[
-              { label: 'Edit', onClick: (p) => startEdit(p), variant: 'primary' },
-              { label: 'Delete', onClick: (p) => deleteProduct(p.id), variant: 'danger' },
-            ]}
-            emptyMessage="No products found in this category."
-          />
+          <>
+            <SaveBar visible={hasUnsaved} onSave={saveAllChanges} />
+            <DataTable
+              rows={products}
+              columns={productColumns({
+                onToggle: handleToggle,
+              })}
+              actions={[
+                { label: 'Edit', onClick: (p) => startEdit(p), variant: 'primary' },
+                { label: 'Delete', onClick: (p) => deleteProduct(p.id), variant: 'danger' },
+              ]}
+              emptyMessage="No products found in this category."
+            />
+          </>
         )}
 
         <EditProductModal

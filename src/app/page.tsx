@@ -8,6 +8,8 @@ import ProductGridSection from '@/components/ProductGridSection';
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 
+export const revalidate = 0;
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-brand-50 font-sans flex flex-col">

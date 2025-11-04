@@ -1,11 +1,12 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import MenuTable from '@/components/admin/MenuTable'
 import { useSearchParams } from 'next/navigation'
 
-export default function AdminDashboardPage() {
+function AdminDashboardInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') as 'products' | 'category') || 'products'
@@ -54,4 +55,12 @@ export default function AdminDashboardPage() {
         </div>
     </div>
   )
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <Suspense fallback={<div className="p-4 text-accent">Loading dashboard...</div>}>
+      <AdminDashboardInner />
+    </Suspense>
+  );
 }
