@@ -1,9 +1,8 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
 import { supabase } from "@/lib/supabaseClient";
+import DataTable, { DataTableColumn } from "@/components/admin/DataTable";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -70,9 +69,8 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-50 font-sans flex flex-col">
-      <Navbar />
-      <main className="flex-1 mx-auto max-w-6xl px-4 py-10">
+    <div>
+      <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-accent">Orders</h1>
           <div className="flex items-center gap-2">
@@ -104,70 +102,60 @@ export default function AdminOrdersPage() {
             <p className="text-accent">No orders found.</p>
           </div>
         ) : (
-          <div className="mt-6 overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-brand-200 bg-brand-base">
-                  <th className="p-3 text-left text-sm font-semibold text-accent">Order ID</th>
-                  <th className="p-3 text-left text-sm font-semibold text-accent">Date</th>
-                  <th className="p-3 text-left text-sm font-semibold text-accent">Customer</th>
-                  <th className="p-3 text-left text-sm font-semibold text-accent">Total</th>
-                  <th className="p-3 text-left text-sm font-semibold text-accent">Status</th>
-                  <th className="p-3 text-left text-sm font-semibold text-accent">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr key={order.id} className="border-b border-brand-200 hover:bg-brand-50">
-                    <td className="p-3 text-sm text-accent">
-                      <span className="font-mono">{order.id.substring(0, 8)}...</span>
-                    </td>
-                    <td className="p-3 text-sm text-accent">
-                      {new Date(order.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="p-3 text-sm text-accent">
-                      <div>
-                        <p className="font-medium">{order.customer_name}</p>
-                        <p className="text-xs text-accent/80">{order.customer_email}</p>
-                      </div>
-                    </td>
-                    <td className="p-3 text-sm text-accent">
-                      Rs {order.total_amount.toLocaleString("en-IN")}
-                    </td>
-                    <td className="p-3 text-sm">
-                      <span className={`inline-block rounded-full px-2 py-1 text-xs ${getStatusBadgeClass(order.status)}`}>
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                      </span>
-                    </td>
-                  <td className="p-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <select
-                          value={order.status}
-                          onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                          className="rounded-md border border-brand-200 bg-white p-1 text-xs text-accent"
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="processing">Processing</option>
-                          <option value="shipped">Shipped</option>
-                          <option value="delivered">Delivered</option>
-                          <option value="cancelled">Cancelled</option>
-                        </select>
-                        <a
-                          href={`/admin-dashboard/orders/${order.id}`}
-                          className="rounded-md border border-brand-200 px-2 py-1 text-xs text-accent hover:bg-brand-base"
-                        >
-                          View
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            rows={orders}
+            columns={orderColumns(getStatusBadgeClass, updateOrderStatus)}
+            actions={[
+              {
+                label: "View",
+                href: (o) => `/admin-dashboard/orders/${o.id}`,
+                variant: "primary",
+              },
+            ]}
+          />
         )}
-      </main>
-      <Footer />
+      </div>
     </div>
   )
+}
+
+function orderColumns(
+  badge: (status: string) => string,
+  onUpdateStatus: (orderId: string, newStatus: string) => void
+): DataTableColumn<any>[] {
+  return [
+    { header: "Order ID", cell: (o) => <span className="font-mono">{String(o.id).substring(0, 8)}...</span> },
+    { header: "Date", cell: (o) => new Date(o.created_at).toLocaleDateString() },
+    {
+      header: "Customer",
+      cell: (o) => (
+        <div>
+          <p className="font-medium">{o.customer_name}</p>
+          <p className="text-xs text-accent/80">{o.customer_email}</p>
+        </div>
+      ),
+    },
+    { header: "Total", cell: (o) => <>Rs {Number(o.total_amount).toLocaleString("en-IN")}</> },
+    {
+      header: "Status",
+      cell: (o) => (
+        <div className="flex items-center gap-2">
+          <span className={`inline-block rounded-full px-2 py-1 text-xs ${badge(o.status)}`}>
+            {String(o.status).charAt(0).toUpperCase() + String(o.status).slice(1)}
+          </span>
+          <select
+            value={o.status}
+            onChange={(e) => onUpdateStatus(o.id, e.target.value)}
+            className="rounded-md border border-brand-200 bg-white p-1 text-xs text-accent"
+          >
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      ),
+    },
+  ]
 }

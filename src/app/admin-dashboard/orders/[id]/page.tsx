@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import OrderDetailsCard from "@/components/OrderDetailsCard";
 import type { OrderRow } from "@/components/UserOrdersList";
 import { supabase } from "@/lib/supabaseClient";
@@ -50,9 +48,8 @@ export default function AdminOrderDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-50 font-sans">
-      <Navbar />
-      <main className="mx-auto max-w-6xl px-4 py-8">
+    <div>
+      <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-accent">Order Details</h1>
           <button
@@ -90,8 +87,7 @@ export default function AdminOrderDetailsPage() {
             </div>
           </>
         )}
-      </main>
-      <Footer />
+      </div>
     </div>
   );
 }

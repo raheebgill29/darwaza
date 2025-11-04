@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
 import Link from 'next/link'
 import { use } from 'react'
 import EditProductModal from '@/components/admin/EditProductModal'
+import DataTable, { DataTableColumn } from '@/components/admin/DataTable'
 
 interface Product {
   id: string
@@ -147,22 +146,16 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
   }
 
   return (
-    <div className="min-h-screen bg-brand-50 font-sans flex flex-col">
-      <Navbar />
-      <main className="flex-1 mx-auto max-w-6xl px-4 py-10">
+    <div>
+      <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="mb-8">
-          <Link 
-            href="/admin-dashboard/view-products" 
-            className="text-accent hover:underline mb-4 inline-block"
-          >
-            &larr; Back to Categories
+          <Link href="/admin-dashboard/view-products" className="text-accent hover:underline mb-4 inline-block">
+            &larr; Back to Products
           </Link>
           <h1 className="text-3xl font-semibold text-accent">
-            {loading ? 'Loading...' : category?.name || 'Category'} Products
+            {loading ? 'Loading...' : `${category?.name ?? 'Category'} Products`}
           </h1>
-          <p className="mt-2 text-accent/80">
-            Viewing all products in this category
-          </p>
+          <p className="mt-2 text-accent/80">Viewing all products in this category</p>
         </div>
 
         {loading ? (
@@ -173,156 +166,79 @@ export default function CategoryProductsPage({ params }: { params: Promise<{ cat
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
             <p>Error: {error}</p>
           </div>
-        ) : products.length === 0 ? (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
-            <p>No products found in this category.</p>
-          </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded-lg overflow-hidden shadow">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {products.map((product) => (
-                  <>
-                    <tr key={product.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="w-16 h-16 relative">
-                          <img 
-                            src={product.product_images?.[0]?.image_url || 'https://via.placeholder.com/150'} 
-                            alt={product.name}
-                            className="w-full h-full object-cover rounded"
-                          />
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">Rs {product.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 max-w-xs truncate">{product.description}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          className="text-indigo-600 hover:text-indigo-900 mr-4"
-                          onClick={() => setExpandedId(expandedId === product.id ? null : product.id)}
-                        >
-                          {expandedId === product.id ? 'Hide' : 'View'}
-                        </button>
-                        <button
-                          className="text-green-600 hover:text-green-800 mr-4"
-                          onClick={() => startEdit(product)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="text-red-600 hover:text-red-800"
-                          onClick={() => deleteProduct(product.id)}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                    {expandedId === product.id && (
-                      <tr>
-                        <td colSpan={5} className="bg-brand-base/50 px-6 py-4">
-                          <div className="flex flex-wrap items-center gap-6">
-                            <label className="flex items-center gap-2 text-sm text-accent">
-                              <input
-                                type="checkbox"
-                                checked={!!product.featured}
-                                onChange={(e) => handleToggle(product.id, 'featured', e.target.checked)}
-                              />
-                              Featured
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-accent">
-                              <input
-                                type="checkbox"
-                                checked={!!product.new_arrival}
-                                onChange={(e) => handleToggle(product.id, 'new_arrival', e.target.checked)}
-                              />
-                              New Arrival
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-accent">
-                              <input
-                                type="checkbox"
-                                checked={!!product.top_rated}
-                                onChange={(e) => handleToggle(product.id, 'top_rated', e.target.checked)}
-                              />
-                              Top Rated
-                            </label>
-
-                            {editingId === product.id ? (
-                              <div className="w-full mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <input
-                                  className="rounded border border-brand-200 p-2"
-                                  value={editForm.name}
-                                  onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                                  placeholder="Name"
-                                />
-                                <input
-                                  className="rounded border border-brand-200 p-2"
-                                  value={editForm.price}
-                                  onChange={(e) => setEditForm((f) => ({ ...f, price: e.target.value }))}
-                                  placeholder="Price"
-                                />
-                                <input
-                                  className="rounded border border-brand-200 p-2"
-                                  value={editForm.description}
-                                  onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
-                                  placeholder="Description"
-                                />
-                                <div className="md:col-span-3 flex gap-3">
-                                  <button className="px-4 py-2 bg-green-600 text-white rounded" onClick={() => saveEdit(product.id)}>Save</button>
-                                  <button className="px-4 py-2 bg-gray-300 text-accent rounded" onClick={cancelEdit}>Cancel</button>
-                                </div>
-                              </div>
-                            ) : null}
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </>
-                ))}
-              </tbody>
-            </table>
-            <EditProductModal
-              open={editModalOpen}
-              productId={editModalProductId || ''}
-              onClose={() => { setEditModalOpen(false); setEditModalProductId(null) }}
-              onSaved={async (updated) => {
-                try {
-                  const { data, error } = await supabase
-                    .from('products')
-                    .select('id,name,price,description,category_id,featured,new_arrival,top_rated,product_images (image_url)')
-                    .eq('id', updated.id)
-                    .single()
-                  if (!error && data) {
-                    setProducts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...data } : p)))
-                  } else {
-                    setProducts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)))
-                  }
-                } catch {
-                  setProducts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)))
-                } finally {
-                  setEditModalOpen(false)
-                  setEditModalProductId(null)
-                }
-              }}
-            />
-          </div>
+          <DataTable
+            rows={products}
+            columns={productColumns({
+              onToggle: handleToggle,
+            })}
+            actions={[
+              { label: 'Edit', onClick: (p) => startEdit(p), variant: 'primary' },
+              { label: 'Delete', onClick: (p) => deleteProduct(p.id), variant: 'danger' },
+            ]}
+            emptyMessage="No products found in this category."
+          />
         )}
-      </main>
-      <Footer />
+
+        <EditProductModal
+          open={editModalOpen}
+          productId={editModalProductId || ''}
+          onClose={() => { setEditModalOpen(false); setEditModalProductId(null) }}
+          onSaved={async (updated) => {
+            try {
+              const { data, error } = await supabase
+                .from('products')
+                .select('id,name,price,description,category_id,featured,new_arrival,top_rated,product_images (image_url)')
+                .eq('id', updated.id)
+                .single()
+              if (!error && data) {
+                setProducts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...data } : p)))
+              } else {
+                setProducts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)))
+              }
+            } catch {
+              setProducts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)))
+            } finally {
+              setEditModalOpen(false)
+              setEditModalProductId(null)
+            }
+          }}
+        />
+      </div>
     </div>
   )
+}
+
+function productColumns(ctx: { onToggle: (id: string, field: 'featured' | 'new_arrival' | 'top_rated', value: boolean) => void }): DataTableColumn<Product>[] {
+  return [
+    {
+      header: 'Image',
+      cell: (p) => (
+        <div className="w-14 h-14 relative">
+          <img src={p.product_images?.[0]?.image_url || 'https://via.placeholder.com/150'} alt={p.name} className="w-full h-full object-cover rounded" />
+        </div>
+      ),
+    },
+    { header: 'Name', cell: (p) => <span className="font-medium">{p.name}</span> },
+    { header: 'Price', cell: (p) => <>Rs {p.price.toLocaleString('en-IN')}</> },
+    { header: 'Description', cell: (p) => <span className="max-w-xs truncate inline-block">{p.description}</span>, className: 'max-w-xs' },
+    {
+      header: 'Featured',
+      cell: (p) => (
+        <input type="checkbox" checked={!!(p as any).featured} onChange={(e) => ctx.onToggle(p.id, 'featured', e.target.checked)} />
+      ),
+    },
+    {
+      header: 'New Arrival',
+      cell: (p) => (
+        <input type="checkbox" checked={!!(p as any).new_arrival} onChange={(e) => ctx.onToggle(p.id, 'new_arrival', e.target.checked)} />
+      ),
+    },
+    {
+      header: 'Top Rated',
+      cell: (p) => (
+        <input type="checkbox" checked={!!(p as any).top_rated} onChange={(e) => ctx.onToggle(p.id, 'top_rated', e.target.checked)} />
+      ),
+    },
+  ]
 }

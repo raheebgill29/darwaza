@@ -11,7 +11,7 @@ type InitialCategory = { id: string; name: string; image_url?: string | null; im
 export default function CategoryForm({
   mode = 'create',
   initialCategory,
-  initialProperties = [''],
+  initialProperties,
   onSaved,
 }: {
   mode?: 'create' | 'edit'
@@ -20,7 +20,7 @@ export default function CategoryForm({
   onSaved?: (categoryId: string) => void
 }) {
   const [name, setName] = useState(initialCategory?.name ?? '')
-  const [properties, setProperties] = useState<string[]>(initialProperties.length ? initialProperties : [''])
+  const [properties, setProperties] = useState<string[]>(initialProperties && initialProperties.length ? initialProperties : [''])
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -38,7 +38,7 @@ export default function CategoryForm({
       setCategoryImage({ file: null, alt: '' })
       setPreviewUrl(null)
     }
-    setProperties(initialProperties.length ? initialProperties : [''])
+    setProperties(initialProperties && initialProperties.length ? initialProperties : [''])
   }, [initialCategory, initialProperties, mode])
 
   function addProperty() {

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useCart } from "@/lib/cartContext";
@@ -14,6 +15,8 @@ export default function Navbar() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const { count } = useCart();
   const { count: wishCount } = useWishlist();
+  const pathname = usePathname();
+  const isAdminRoute = pathname?.startsWith("/admin-dashboard") ?? false;
 
   useEffect(() => {
     let mounted = true;
@@ -48,9 +51,11 @@ export default function Navbar() {
         <div className="flex w-full items-center justify-between px-4">
           {/* Mobile: Hamburger on the left; Desktop: spacer */}
           <div className="w-1/3 flex items-center justify-start">
-        <div className="md:hidden">
-          <MobileMenu displayName={displayName} isAdmin={isAdmin} wishCount={wishCount} />
-        </div>
+        {!isAdminRoute && (
+          <div className="md:hidden">
+            <MobileMenu displayName={displayName} isAdmin={isAdmin} wishCount={wishCount} />
+          </div>
+        )}
           </div>
           <Link href="/" className="text-3xl font-serif font-bold text-accent">
             Darwaza
@@ -62,54 +67,60 @@ export default function Navbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
               </svg>
             </button> */}
-            {displayName ? (
-              <Link href={isAdmin ? "/admin-dashboard" : "/user-dashboard"} className="text-accent hover:text-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-              </Link>
-            ) : (
-              <Link href="/sign-in" className="text-accent hover:text-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-              </Link>
+            {!isAdminRoute && (
+              <>
+                {displayName ? (
+                  <Link href={isAdmin ? "/admin-dashboard" : "/user-dashboard"} className="text-accent hover:text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                  </Link>
+                ) : (
+                  <Link href="/sign-in" className="text-accent hover:text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                  </Link>
+                )}
+                <Link href="/wishlist" className="relative text-accent hover:text-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.815 3 8.25c0 7.219 2.912 11.38 7.518 14.025 1.412.606 2.762.606 4.174 0C18.088 19.63 21 15.469 21 8.25z" />
+                  </svg>
+                  {wishCount > 0 && (
+                    <span className="absolute -top-2 -right-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">
+                      {wishCount}
+                    </span>
+                  )}
+                </Link>
+                <Link href="/cart" className="relative text-accent hover:text-primary">
+                  <CartIcon className="h-6 w-6" />
+                  {count > 0 && (
+                    <span className="absolute -top-2 -right-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">
+                      {count}
+                    </span>
+                  )}
+                </Link>
+              </>
             )}
-            <Link href="/wishlist" className="relative text-accent hover:text-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.815 3 8.25c0 7.219 2.912 11.38 7.518 14.025 1.412.606 2.762.606 4.174 0C18.088 19.63 21 15.469 21 8.25z" />
-              </svg>
-              {wishCount > 0 && (
-                <span className="absolute -top-2 -right-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">
-                  {wishCount}
-                </span>
-              )}
-            </Link>
-            <Link href="/cart" className="relative text-accent hover:text-primary">
-              <CartIcon className="h-6 w-6" />
-              {count > 0 && (
-                <span className="absolute -top-2 -right-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">
-                  {count}
-                </span>
-              )}
-            </Link>
           </div>
           {/* Mobile: Cart icon on the right */}
-          <div className="flex md:hidden w-1/3 items-center justify-end">
-            <Link href="/cart" className="relative text-accent hover:text-primary" aria-label="Cart">
-              <CartIcon className="h-6 w-6" />
-              {count > 0 && (
-                <span className="absolute -top-2 -right-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">
-                  {count}
-                </span>
-              )}
-            </Link>
-          </div>
+          {!isAdminRoute && (
+            <div className="flex md:hidden w-1/3 items-center justify-end">
+              <Link href="/cart" className="relative text-accent hover:text-primary" aria-label="Cart">
+                <CartIcon className="h-6 w-6" />
+                {count > 0 && (
+                  <span className="absolute -top-2 -right-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs text-white">
+                    {count}
+                  </span>
+                )}
+              </Link>
+            </div>
+          )}
         </div>
         {/* Mobile: show primary nav links below the header */}
-        <NavLinks className="mt-3 flex md:hidden" />
+        {!isAdminRoute && <NavLinks className="mt-3 flex md:hidden" />}
         {/* Desktop: show primary nav links centered */}
-        <NavLinks className="mt-4 hidden md:flex" />
+        {!isAdminRoute && <NavLinks className="mt-4 hidden md:flex" />}
       </div>
     </header>
   );

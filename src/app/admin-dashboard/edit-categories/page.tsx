@@ -1,8 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
 import { supabase } from '@/lib/supabaseClient'
 import EditCategoryModal from '@/components/admin/EditCategoryModal'
 import Link from 'next/link'
@@ -68,9 +66,8 @@ export default function EditCategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-50 font-sans">
-      <Navbar />
-      <main className="mx-auto max-w-6xl px-4 py-10">
+    <div>
+      <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="mb-8">
           <Link href="/admin-dashboard" className="text-accent hover:underline mb-4 inline-block">
             &larr; Back to Dashboard
@@ -119,8 +116,7 @@ export default function EditCategoriesPage() {
             ))}
           </div>
         )}
-      </main>
-      <Footer />
+      </div>
 
       <EditCategoryModal
         open={modalOpen}
